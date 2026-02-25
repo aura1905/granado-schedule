@@ -1863,48 +1863,129 @@
     const db = getDatabase(app);
 
     document.addEventListener('DOMContentLoaded', () => {
-      const checklistItems = document.querySelectorAll('.checklist-item');
 
-      checklistItems.forEach((item, index) => {
-        const ckBox = item.querySelector('.ck-box');
-        if (!ckBox) return;
-
-        item.style.cursor = 'pointer';
-        item.style.userSelect = 'none';
-        ckBox.style.transition = 'all 0.2s';
-        ckBox.style.display = 'flex';
-        ckBox.style.alignItems = 'center';
-        ckBox.style.justifyContent = 'center';
-        ckBox.style.color = 'var(--bg-dark)';
-        ckBox.style.fontWeight = '900';
-        ckBox.style.fontSize = '14px';
-
-        const itemId = 'chk_' + index;
+      // Helper: Make an element syncable
+      const makeSyncable = (element, idPrefix, globalIndex, styleType = 'text') => {
+        const itemId = idPrefix + '_' + globalIndex;
         const dbRef = ref(db, 'schedule_checks/' + itemId);
+
+        element.style.cursor = 'pointer';
+        element.style.userSelect = 'none';
+        element.style.transition = 'all 0.2s ease';
+        element.title = 'Click to toggle completion';
 
         let isChecked = false;
 
-        // Listen for changes from Firebase
         onValue(dbRef, (snapshot) => {
           isChecked = !!snapshot.val();
           if (isChecked) {
-            ckBox.style.background = 'var(--gold)';
-            ckBox.style.borderColor = 'var(--gold)';
-            ckBox.innerHTML = '&#10003;';
-            item.style.opacity = '0.6';
+            if (styleType === 'text') {
+              element.style.textDecoration = 'line-through';
+              element.style.opacity = '0.4';
+              element.style.filter = 'grayscale(100%)';
+            } else if (styleType === 'tag') {
+              element.style.background = 'var(--gold)';
+              element.style.color = 'var(--bg-dark)';
+              element.style.borderColor = 'var(--gold)';
+              element.style.opacity = '0.8';
+            } else if (styleType === 'checklist') {
+              const ckBox = element.querySelector('.ck-box');
+              if (ckBox) {
+                ckBox.style.background = 'var(--gold)';
+                ckBox.style.borderColor = 'var(--gold)';
+                ckBox.innerHTML = '&#10003;';
+              }
+              element.style.opacity = '0.6';
+            }
           } else {
-            ckBox.style.background = 'transparent';
-            ckBox.style.borderColor = 'var(--border)';
-            ckBox.innerHTML = '';
-            item.style.opacity = '1';
+            if (styleType === 'text') {
+              element.style.textDecoration = 'none';
+              element.style.opacity = '1';
+              element.style.filter = 'none';
+            } else if (styleType === 'tag') {
+              element.style.background = 'rgba(255,255,255,0.05)';
+              element.style.color = 'var(--text)';
+              element.style.borderColor = 'rgba(255,255,255,0.08)';
+              element.style.opacity = '1';
+            } else if (styleType === 'checklist') {
+              const ckBox = element.querySelector('.ck-box');
+              if (ckBox) {
+                ckBox.style.background = 'transparent';
+                ckBox.style.borderColor = 'var(--border)';
+                ckBox.innerHTML = '';
+              }
+              element.style.opacity = '1';
+            }
           }
         });
 
-        // Handle user click to update Database
-        item.addEventListener('click', () => {
+        element.addEventListener('click', (e) => {
+          e.stopPropagation();
           set(dbRef, !isChecked);
         });
+      };
+
+      // 1. Character Names Sync
+      const charNameContainers = document.querySelectorAll('.char-week .names');
+      let charIndex = 0;
+      charNameContainers.forEach(container => {
+        // Split by comma, wrap each part in a span to make it clickable
+        const htmlStr = container.innerHTML;
+        const parts = htmlStr.split(',');
+        const newParts = parts.map(part => {
+          const span = document.createElement('span');
+          span.className = 'syncable-char';
+          span.innerHTML = part.trim();
+          return span.outerHTML;
+        });
+        container.innerHTML = newParts.join(', ');
       });
+
+      // Now bind them
+      document.querySelectorAll('.syncable-char').forEach(el => {
+        makeSyncable(el, 'char', charIndex++, 'text');
+      });
+
+      // 2. Monster Tags Sync
+      const mobTags = document.querySelectorAll('.mob-tag');
+      mobTags.forEach((mob, idx) => {
+        makeSyncable(mob, 'mob', idx, 'tag');
+      });
+
+      // 3. Boss Names Sync
+      const bossNames = document.querySelectorAll('.boss-name');
+      bossNames.forEach((boss, idx) => {
+        makeSyncable(boss, 'boss', idx, 'text');
+      });
+
+      // 4. Region Headers Sync (for Background tasks)
+      const regions = document.querySelectorAll('.region-card-header');
+      regions.forEach((region, idx) => {
+        makeSyncable(region, 'region', idx, 'text');
+      });
+
+      // 5. FX items
+      const fxItems = document.querySelectorAll('.fx-item');
+      fxItems.forEach((fx, idx) => {
+        makeSyncable(fx, 'fx', idx, 'text');
+      });
+
+      // 6. Bottom Checklist Sync
+      const checklistItems = document.querySelectorAll('.checklist-item');
+      checklistItems.forEach((item, index) => {
+        const ckBox = item.querySelector('.ck-box');
+        if (ckBox) {
+          ckBox.style.transition = 'all 0.2s';
+          ckBox.style.display = 'flex';
+          ckBox.style.alignItems = 'center';
+          ckBox.style.justifyContent = 'center';
+          ckBox.style.color = 'var(--bg-dark)';
+          ckBox.style.fontWeight = '900';
+          ckBox.style.fontSize = '14px';
+        }
+        makeSyncable(item, 'chk', index, 'checklist');
+      });
+
     });
   </script>
 </body>
