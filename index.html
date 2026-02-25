@@ -1,1556 +1,1912 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GE AFK - Art Production Schedule</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GE AFK - Art Production Schedule</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
 
-  :root {
-    --bg-dark: #0a0a0f;
-    --bg-card: #12121a;
-    --bg-card-hover: #1a1a26;
-    --border: #2a2a3a;
-    --gold: #d4a843;
-    --gold-dim: #a07830;
-    --gold-bright: #f0c850;
-    --text: #e0ddd5;
-    --text-dim: #8a8780;
-    --text-bright: #ffffff;
-    --accent-green: #4ecca3;
-    --accent-blue: #4a90d9;
-    --accent-red: #d94a5c;
-    --accent-purple: #9b6fd9;
-    --accent-orange: #d98a4a;
-    --region-early: #4ecca3;
-    --region-mid: #d4a843;
-    --region-late: #d94a5c;
-    --boss-mid: #6aadcf;
-    --boss-elite: #c77dff;
-    --boss-final: #ff6b6b;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Noto Sans KR', -apple-system, sans-serif;
-    background: var(--bg-dark);
-    color: var(--text);
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-
-  /* ── Header ── */
-  .hero {
-    background: linear-gradient(135deg, #0a0a0f 0%, #1a1028 40%, #0f1a2a 70%, #0a0a0f 100%);
-    border-bottom: 1px solid var(--gold-dim);
-    padding: 60px 40px 50px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(212,168,67,0.08) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  .hero-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
-    color: var(--bg-dark);
-    padding: 4px 16px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-  }
-  .hero h1 {
-    font-size: 36px;
-    font-weight: 900;
-    color: var(--text-bright);
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
-  }
-  .hero h1 span { color: var(--gold); }
-  .hero .subtitle {
-    font-size: 16px;
-    color: var(--text-dim);
-    font-weight: 300;
-  }
-
-  /* ── Summary Cards ── */
-  .summary-bar {
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    margin-top: 32px;
-    flex-wrap: wrap;
-  }
-  .summary-item {
-    padding: 16px 28px;
-    border-right: 1px solid rgba(212,168,67,0.2);
-    text-align: center;
-  }
-  .summary-item:last-child { border-right: none; }
-  .summary-item .num {
-    font-size: 28px;
-    font-weight: 900;
-    color: var(--gold-bright);
-    display: block;
-    line-height: 1;
-  }
-  .summary-item .label {
-    font-size: 12px;
-    color: var(--text-dim);
-    margin-top: 4px;
-    letter-spacing: 1px;
-  }
-
-  /* ── Container ── */
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 24px;
-  }
-
-  /* ── Section Header ── */
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 28px;
-    margin-top: 56px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--border);
-  }
-  .section-header:first-child { margin-top: 0; }
-  .section-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-  .section-header h2 {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text-bright);
-  }
-  .section-header .count {
-    margin-left: auto;
-    background: rgba(212,168,67,0.12);
-    color: var(--gold);
-    padding: 4px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 700;
-  }
-
-  /* ── Role Badge ── */
-  .role-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 10px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-  }
-  .role-c { background: rgba(155,111,217,0.15); color: var(--accent-purple); border: 1px solid rgba(155,111,217,0.3); }
-  .role-d { background: rgba(78,204,163,0.15); color: var(--accent-green); border: 1px solid rgba(78,204,163,0.3); }
-
-  /* ── Character Schedule ── */
-  .char-timeline {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .char-week {
-    display: grid;
-    grid-template-columns: 70px 1fr 60px 80px;
-    align-items: center;
-    gap: 16px;
-    padding: 14px 20px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    transition: all 0.15s ease;
-  }
-  .char-week:hover {
-    background: var(--bg-card-hover);
-    border-color: rgba(155,111,217,0.4);
-  }
-  .char-week .week-label {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent-purple);
-    background: rgba(155,111,217,0.1);
-    padding: 4px 10px;
-    border-radius: 6px;
-    text-align: center;
-  }
-  .char-week .names {
-    font-size: 14px;
-    color: var(--text);
-    line-height: 1.5;
-  }
-  .char-week .names .highlight {
-    color: var(--gold);
-    font-weight: 700;
-  }
-  .char-week .cumul {
-    font-size: 13px;
-    color: var(--text-dim);
-    text-align: center;
-  }
-  .char-week .cumul strong {
-    color: var(--gold-bright);
-    font-size: 16px;
-  }
-  .progress-mini {
-    height: 6px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .progress-mini .fill {
-    height: 100%;
-    border-radius: 3px;
-    background: linear-gradient(90deg, var(--accent-purple), var(--gold));
-    transition: width 0.3s ease;
-  }
-
-  /* ── Pipeline Note ── */
-  .pipeline-note {
-    background: linear-gradient(135deg, rgba(155,111,217,0.08), rgba(212,168,67,0.08));
-    border: 1px solid rgba(155,111,217,0.2);
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin-top: 16px;
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-  }
-  .pipeline-note .icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
-  .pipeline-note .steps {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  .pipeline-note .step {
-    background: rgba(255,255,255,0.06);
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-    white-space: nowrap;
-  }
-  .pipeline-note .step em {
-    font-style: normal;
-    color: var(--text-dim);
-    font-size: 11px;
-  }
-  .pipeline-note .arrow {
-    color: var(--gold-dim);
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-  .pipeline-note .total {
-    margin-top: 10px;
-    font-size: 13px;
-    color: var(--gold);
-    font-weight: 700;
-  }
-
-  /* ── Region Cards ── */
-  .region-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    gap: 16px;
-  }
-  .region-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: all 0.15s ease;
-  }
-  .region-card:hover {
-    border-color: rgba(78,204,163,0.4);
-    transform: translateY(-1px);
-  }
-  .region-card-header {
-    padding: 16px 20px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-  }
-  .region-card-header .region-num {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 900;
-    color: var(--bg-dark);
-    flex-shrink: 0;
-    margin-right: 12px;
-  }
-  .group-early .region-num { background: var(--region-early); }
-  .group-mid .region-num { background: var(--region-mid); }
-  .region-card-header .region-name {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text-bright);
-    flex: 1;
-  }
-  .region-card-header .region-name small {
-    display: block;
-    font-size: 11px;
-    font-weight: 400;
-    color: var(--text-dim);
-    margin-top: 2px;
-  }
-  .region-card-header .dna-tag {
-    font-size: 11px;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-weight: 500;
-  }
-  .dna-wildlife { background: rgba(78,204,163,0.12); color: var(--accent-green); }
-  .dna-undead { background: rgba(155,111,217,0.12); color: var(--accent-purple); }
-  .dna-daemon { background: rgba(217,74,92,0.12); color: var(--accent-red); }
-  .dna-lifeless { background: rgba(74,144,217,0.12); color: var(--accent-blue); }
-  .dna-human { background: rgba(217,138,74,0.12); color: var(--accent-orange); }
-  .dna-mixed { background: rgba(212,168,67,0.12); color: var(--gold); }
-
-  .region-card-body { padding: 16px 20px; }
-  .monster-group-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-dim);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .monster-group-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-  .mob-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 16px;
-  }
-  .mob-tag {
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    background: rgba(255,255,255,0.05);
-    color: var(--text);
-    border: 1px solid rgba(255,255,255,0.08);
-  }
-
-  .boss-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .boss-entry {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    background: rgba(0,0,0,0.2);
-  }
-  .boss-stage {
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 4px;
-    min-width: 50px;
-    text-align: center;
-    white-space: nowrap;
-  }
-  .boss-stage.mid { background: rgba(106,173,207,0.15); color: var(--boss-mid); }
-  .boss-stage.elite { background: rgba(199,125,255,0.15); color: var(--boss-elite); }
-  .boss-stage.final { background: rgba(255,107,107,0.15); color: var(--boss-final); }
-  .boss-name {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
-  }
-  .boss-name.final-boss {
-    color: var(--boss-final);
-    font-weight: 700;
-  }
-
-  .region-card-footer {
-    padding: 10px 20px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .region-card-footer .stages {
-    font-size: 12px;
-    color: var(--text-dim);
-  }
-  .region-card-footer .stages strong { color: var(--text); }
-  .region-card-footer .week-tag {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 6px;
-    background: rgba(78,204,163,0.1);
-    color: var(--accent-green);
-    border: 1px solid rgba(78,204,163,0.2);
-  }
-
-  /* ── Stats Table ── */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 12px;
-    margin-top: 20px;
-  }
-  .stat-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-  }
-  .stat-card .stat-value {
-    font-size: 32px;
-    font-weight: 900;
-    color: var(--gold-bright);
-    line-height: 1;
-  }
-  .stat-card .stat-label {
-    font-size: 12px;
-    color: var(--text-dim);
-    margin-top: 6px;
-  }
-
-  /* ── BG Schedule ── */
-  .env-timeline {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .env-week {
-    display: grid;
-    grid-template-columns: 70px 1fr 120px;
-    align-items: center;
-    gap: 16px;
-    padding: 12px 20px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    transition: all 0.15s ease;
-  }
-  .env-week:hover {
-    background: var(--bg-card-hover);
-    border-color: rgba(78,204,163,0.4);
-  }
-  .env-week .week-label {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent-green);
-    background: rgba(78,204,163,0.1);
-    padding: 4px 10px;
-    border-radius: 6px;
-    text-align: center;
-  }
-  .env-week .task-desc {
-    font-size: 14px;
-    color: var(--text);
-  }
-  .env-week .task-desc .region-highlight {
-    color: var(--accent-green);
-    font-weight: 700;
-  }
-  .env-week .task-phase {
-    font-size: 12px;
-    padding: 4px 12px;
-    border-radius: 6px;
-    text-align: center;
-    font-weight: 600;
-  }
-  .phase-terrain { background: rgba(74,144,217,0.12); color: var(--accent-blue); }
-  .phase-complete { background: rgba(78,204,163,0.12); color: var(--accent-green); }
-  .phase-both { background: rgba(212,168,67,0.12); color: var(--gold); }
-
-  /* ── VFX/SFX Schedule ── */
-  .fx-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 12px;
-  }
-  .fx-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-  }
-  .fx-card .fx-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  .fx-card .fx-period {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent-orange);
-    background: rgba(217,138,74,0.1);
-    padding: 4px 12px;
-    border-radius: 6px;
-  }
-  .fx-card .fx-items {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .fx-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    color: var(--text);
-  }
-  .fx-item .fx-type {
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 4px;
-    min-width: 40px;
-    text-align: center;
-    letter-spacing: 0.5px;
-  }
-  .fx-type.bgm { background: rgba(78,204,163,0.12); color: var(--accent-green); }
-  .fx-type.sfx { background: rgba(74,144,217,0.12); color: var(--accent-blue); }
-  .fx-type.vfx { background: rgba(155,111,217,0.12); color: var(--accent-purple); }
-
-  /* ── Group Divider ── */
-  .group-divider {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin: 32px 0 20px;
-    padding: 12px 20px;
-    border-radius: 10px;
-  }
-  .group-divider.early { background: rgba(78,204,163,0.06); border-left: 3px solid var(--region-early); }
-  .group-divider.mid { background: rgba(212,168,67,0.06); border-left: 3px solid var(--region-mid); }
-  .group-divider h3 {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-bright);
-  }
-  .group-divider .group-desc {
-    font-size: 12px;
-    color: var(--text-dim);
-    margin-left: auto;
-  }
-
-  /* ── Checklist ── */
-  .checklist {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 8px;
-  }
-  .checklist-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--text);
-  }
-  .checklist-item .ck-box {
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--border);
-    border-radius: 5px;
-    flex-shrink: 0;
-  }
-  .checklist-item .ck-qty {
-    margin-left: auto;
-    font-weight: 700;
-    color: var(--gold);
-    font-size: 14px;
-  }
-
-  /* ── Risk Banner ── */
-  .risk-banner {
-    background: rgba(217,74,92,0.06);
-    border: 1px solid rgba(217,74,92,0.2);
-    border-radius: 12px;
-    padding: 24px;
-    margin-top: 32px;
-  }
-  .risk-banner h3 {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--accent-red);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .risk-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 10px;
-  }
-  .risk-item {
-    display: flex;
-    gap: 12px;
-    padding: 12px;
-    background: rgba(0,0,0,0.2);
-    border-radius: 8px;
-  }
-  .risk-item .risk-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--accent-red);
-    min-width: 120px;
-  }
-  .risk-item .risk-fix {
-    font-size: 12px;
-    color: var(--text-dim);
-  }
-
-  /* ── Footer ── */
-  .doc-footer {
-    text-align: center;
-    padding: 40px 20px;
-    border-top: 1px solid var(--border);
-    margin-top: 60px;
-  }
-  .doc-footer .logo-text {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--gold-dim);
-    letter-spacing: 3px;
-  }
-  .doc-footer .gen-date {
-    font-size: 11px;
-    color: var(--text-dim);
-    margin-top: 6px;
-  }
-
-  /* ── Print ── */
-  @media print {
-    body { background: #fff; color: #222; }
-    .hero { background: #f5f5f0; border-bottom: 2px solid #ccc; }
-    .hero h1 { color: #222; }
-    .hero h1 span { color: #8b6914; }
-    .region-card, .char-week, .env-week, .fx-card, .stat-card, .checklist-item {
-      background: #fafafa; border-color: #ddd;
+    :root {
+      --bg-dark: #0a0a0f;
+      --bg-card: #12121a;
+      --bg-card-hover: #1a1a26;
+      --border: #2a2a3a;
+      --gold: #d4a843;
+      --gold-dim: #a07830;
+      --gold-bright: #f0c850;
+      --text: #e0ddd5;
+      --text-dim: #8a8780;
+      --text-bright: #ffffff;
+      --accent-green: #4ecca3;
+      --accent-blue: #4a90d9;
+      --accent-red: #d94a5c;
+      --accent-purple: #9b6fd9;
+      --accent-orange: #d98a4a;
+      --region-early: #4ecca3;
+      --region-mid: #d4a843;
+      --region-late: #d94a5c;
+      --boss-mid: #6aadcf;
+      --boss-elite: #c77dff;
+      --boss-final: #ff6b6b;
     }
-    .region-card:hover, .char-week:hover, .env-week:hover { transform: none; }
-  }
 
-  /* ── Responsive ── */
-  @media (max-width: 768px) {
-    .hero { padding: 40px 20px 30px; }
-    .hero h1 { font-size: 24px; }
-    .summary-item { padding: 10px 16px; }
-    .summary-item .num { font-size: 22px; }
-    .region-grid { grid-template-columns: 1fr; }
-    .char-week { grid-template-columns: 60px 1fr; gap: 8px; }
-    .char-week .cumul, .char-week .progress-mini { display: none; }
-    .env-week { grid-template-columns: 60px 1fr; }
-    .env-week .task-phase { display: none; }
-  }
-</style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', -apple-system, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .hero {
+      background: linear-gradient(135deg, #0a0a0f 0%, #1a1028 40%, #0f1a2a 70%, #0a0a0f 100%);
+      border-bottom: 1px solid var(--gold-dim);
+      padding: 60px 40px 50px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(212, 168, 67, 0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      color: var(--bg-dark);
+      padding: 4px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--text-bright);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero h1 span {
+      color: var(--gold);
+    }
+
+    .hero .subtitle {
+      font-size: 16px;
+      color: var(--text-dim);
+      font-weight: 300;
+    }
+
+    /* ── Summary Cards ── */
+    .summary-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .summary-item {
+      padding: 16px 28px;
+      border-right: 1px solid rgba(212, 168, 67, 0.2);
+      text-align: center;
+    }
+
+    .summary-item:last-child {
+      border-right: none;
+    }
+
+    .summary-item .num {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--gold-bright);
+      display: block;
+      line-height: 1;
+    }
+
+    .summary-item .label {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 4px;
+      letter-spacing: 1px;
+    }
+
+    /* ── Container ── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    /* ── Section Header ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      margin-top: 56px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header:first-child {
+      margin-top: 0;
+    }
+
+    .section-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+
+    .section-header .count {
+      margin-left: auto;
+      background: rgba(212, 168, 67, 0.12);
+      color: var(--gold);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* ── Role Badge ── */
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .role-c {
+      background: rgba(155, 111, 217, 0.15);
+      color: var(--accent-purple);
+      border: 1px solid rgba(155, 111, 217, 0.3);
+    }
+
+    .role-d {
+      background: rgba(78, 204, 163, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(78, 204, 163, 0.3);
+    }
+
+    /* ── Character Schedule ── */
+    .char-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .char-week {
+      display: grid;
+      grid-template-columns: 70px 1fr 60px 80px;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: all 0.15s ease;
+    }
+
+    .char-week:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(155, 111, 217, 0.4);
+    }
+
+    .char-week .week-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-purple);
+      background: rgba(155, 111, 217, 0.1);
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .char-week .names {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .char-week .names .highlight {
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .char-week .cumul {
+      font-size: 13px;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .char-week .cumul strong {
+      color: var(--gold-bright);
+      font-size: 16px;
+    }
+
+    .progress-mini {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-mini .fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--accent-purple), var(--gold));
+      transition: width 0.3s ease;
+    }
+
+    /* ── Pipeline Note ── */
+    .pipeline-note {
+      background: linear-gradient(135deg, rgba(155, 111, 217, 0.08), rgba(212, 168, 67, 0.08));
+      border: 1px solid rgba(155, 111, 217, 0.2);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-top: 16px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .pipeline-note .icon {
+      font-size: 24px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .pipeline-note .steps {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pipeline-note .step {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .pipeline-note .step em {
+      font-style: normal;
+      color: var(--text-dim);
+      font-size: 11px;
+    }
+
+    .pipeline-note .arrow {
+      color: var(--gold-dim);
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .pipeline-note .total {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    /* ── Region Cards ── */
+    .region-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 16px;
+    }
+
+    .region-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.15s ease;
+    }
+
+    .region-card:hover {
+      border-color: rgba(78, 204, 163, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .region-card-header {
+      padding: 16px 20px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .region-card-header .region-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--bg-dark);
+      flex-shrink: 0;
+      margin-right: 12px;
+    }
+
+    .group-early .region-num {
+      background: var(--region-early);
+    }
+
+    .group-mid .region-num {
+      background: var(--region-mid);
+    }
+
+    .region-card-header .region-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-bright);
+      flex: 1;
+    }
+
+    .region-card-header .region-name small {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .region-card-header .dna-tag {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+
+    .dna-wildlife {
+      background: rgba(78, 204, 163, 0.12);
+      color: var(--accent-green);
+    }
+
+    .dna-undead {
+      background: rgba(155, 111, 217, 0.12);
+      color: var(--accent-purple);
+    }
+
+    .dna-daemon {
+      background: rgba(217, 74, 92, 0.12);
+      color: var(--accent-red);
+    }
+
+    .dna-lifeless {
+      background: rgba(74, 144, 217, 0.12);
+      color: var(--accent-blue);
+    }
+
+    .dna-human {
+      background: rgba(217, 138, 74, 0.12);
+      color: var(--accent-orange);
+    }
+
+    .dna-mixed {
+      background: rgba(212, 168, 67, 0.12);
+      color: var(--gold);
+    }
+
+    .region-card-body {
+      padding: 16px 20px;
+    }
+
+    .monster-group-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .monster-group-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .mob-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .mob-tag {
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .boss-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .boss-entry {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .boss-stage {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      min-width: 50px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .boss-stage.mid {
+      background: rgba(106, 173, 207, 0.15);
+      color: var(--boss-mid);
+    }
+
+    .boss-stage.elite {
+      background: rgba(199, 125, 255, 0.15);
+      color: var(--boss-elite);
+    }
+
+    .boss-stage.final {
+      background: rgba(255, 107, 107, 0.15);
+      color: var(--boss-final);
+    }
+
+    .boss-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .boss-name.final-boss {
+      color: var(--boss-final);
+      font-weight: 700;
+    }
+
+    .region-card-footer {
+      padding: 10px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .region-card-footer .stages {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .region-card-footer .stages strong {
+      color: var(--text);
+    }
+
+    .region-card-footer .week-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 6px;
+      background: rgba(78, 204, 163, 0.1);
+      color: var(--accent-green);
+      border: 1px solid rgba(78, 204, 163, 0.2);
+    }
+
+    /* ── Stats Table ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-card .stat-value {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--gold-bright);
+      line-height: 1;
+    }
+
+    .stat-card .stat-label {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 6px;
+    }
+
+    /* ── BG Schedule ── */
+    .env-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .env-week {
+      display: grid;
+      grid-template-columns: 70px 1fr 120px;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: all 0.15s ease;
+    }
+
+    .env-week:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(78, 204, 163, 0.4);
+    }
+
+    .env-week .week-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-green);
+      background: rgba(78, 204, 163, 0.1);
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .env-week .task-desc {
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .env-week .task-desc .region-highlight {
+      color: var(--accent-green);
+      font-weight: 700;
+    }
+
+    .env-week .task-phase {
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .phase-terrain {
+      background: rgba(74, 144, 217, 0.12);
+      color: var(--accent-blue);
+    }
+
+    .phase-complete {
+      background: rgba(78, 204, 163, 0.12);
+      color: var(--accent-green);
+    }
+
+    .phase-both {
+      background: rgba(212, 168, 67, 0.12);
+      color: var(--gold);
+    }
+
+    /* ── VFX/SFX Schedule ── */
+    .fx-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 12px;
+    }
+
+    .fx-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .fx-card .fx-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .fx-card .fx-period {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-orange);
+      background: rgba(217, 138, 74, 0.1);
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+
+    .fx-card .fx-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .fx-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .fx-item .fx-type {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      min-width: 40px;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+
+    .fx-type.bgm {
+      background: rgba(78, 204, 163, 0.12);
+      color: var(--accent-green);
+    }
+
+    .fx-type.sfx {
+      background: rgba(74, 144, 217, 0.12);
+      color: var(--accent-blue);
+    }
+
+    .fx-type.vfx {
+      background: rgba(155, 111, 217, 0.12);
+      color: var(--accent-purple);
+    }
+
+    /* ── Group Divider ── */
+    .group-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 32px 0 20px;
+      padding: 12px 20px;
+      border-radius: 10px;
+    }
+
+    .group-divider.early {
+      background: rgba(78, 204, 163, 0.06);
+      border-left: 3px solid var(--region-early);
+    }
+
+    .group-divider.mid {
+      background: rgba(212, 168, 67, 0.06);
+      border-left: 3px solid var(--region-mid);
+    }
+
+    .group-divider h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+
+    .group-divider .group-desc {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-left: auto;
+    }
+
+    /* ── Checklist ── */
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 8px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .checklist-item .ck-box {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+
+    .checklist-item .ck-qty {
+      margin-left: auto;
+      font-weight: 700;
+      color: var(--gold);
+      font-size: 14px;
+    }
+
+    /* ── Risk Banner ── */
+    .risk-banner {
+      background: rgba(217, 74, 92, 0.06);
+      border: 1px solid rgba(217, 74, 92, 0.2);
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 32px;
+    }
+
+    .risk-banner h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent-red);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 10px;
+    }
+
+    .risk-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+    }
+
+    .risk-item .risk-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-red);
+      min-width: 120px;
+    }
+
+    .risk-item .risk-fix {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    /* ── Footer ── */
+    .doc-footer {
+      text-align: center;
+      padding: 40px 20px;
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+    }
+
+    .doc-footer .logo-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gold-dim);
+      letter-spacing: 3px;
+    }
+
+    .doc-footer .gen-date {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 6px;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body {
+        background: #fff;
+        color: #222;
+      }
+
+      .hero {
+        background: #f5f5f0;
+        border-bottom: 2px solid #ccc;
+      }
+
+      .hero h1 {
+        color: #222;
+      }
+
+      .hero h1 span {
+        color: #8b6914;
+      }
+
+      .region-card,
+      .char-week,
+      .env-week,
+      .fx-card,
+      .stat-card,
+      .checklist-item {
+        background: #fafafa;
+        border-color: #ddd;
+      }
+
+      .region-card:hover,
+      .char-week:hover,
+      .env-week:hover {
+        transform: none;
+      }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .hero {
+        padding: 40px 20px 30px;
+      }
+
+      .hero h1 {
+        font-size: 24px;
+      }
+
+      .summary-item {
+        padding: 10px 16px;
+      }
+
+      .summary-item .num {
+        font-size: 22px;
+      }
+
+      .region-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .char-week {
+        grid-template-columns: 60px 1fr;
+        gap: 8px;
+      }
+
+      .char-week .cumul,
+      .char-week .progress-mini {
+        display: none;
+      }
+
+      .env-week {
+        grid-template-columns: 60px 1fr;
+      }
+
+      .env-week .task-phase {
+        display: none;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- ═══════════════════════ HERO ═══════════════════════ -->
-<header class="hero">
-  <div class="hero-badge">IMC GAMES - ART TEAM</div>
-  <h1><span>Granado Espada</span> AFK</h1>
-  <p class="subtitle">Art Production Schedule &mdash; OBT 12 Regions</p>
+  <!-- ═══════════════════════ HERO ═══════════════════════ -->
+  <header class="hero">
+    <div class="hero-badge">IMC GAMES - ART TEAM</div>
+    <h1><span>Granado Espada</span> AFK</h1>
+    <p class="subtitle">Art Production Schedule &mdash; OBT 12 Regions</p>
 
-  <div class="summary-bar">
-    <div class="summary-item">
-      <span class="num">60</span>
-      <span class="label">CHARACTERS</span>
+    <div class="summary-bar">
+      <div class="summary-item">
+        <span class="num">60</span>
+        <span class="label">CHARACTERS</span>
+      </div>
+      <div class="summary-item">
+        <span class="num">12</span>
+        <span class="label">REGIONS</span>
+      </div>
+      <div class="summary-item">
+        <span class="num">78</span>
+        <span class="label">MONSTERS</span>
+      </div>
+      <div class="summary-item">
+        <span class="num">40+</span>
+        <span class="label">VFX</span>
+      </div>
+      <div class="summary-item">
+        <span class="num">14</span>
+        <span class="label">WEEKS</span>
+      </div>
     </div>
-    <div class="summary-item">
-      <span class="num">12</span>
-      <span class="label">REGIONS</span>
+  </header>
+
+  <div class="container">
+
+    <!-- ═══════════════════════ 1. CHARACTER SCHEDULE ═══════════════════════ -->
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(155,111,217,0.15); color:var(--accent-purple);">C</div>
+      <div>
+        <h2>Character Artist Schedule</h2>
+        <span class="role-badge role-c">[C] 캐릭터 아티스트</span>
+      </div>
+      <span class="count">60종 / 14주</span>
     </div>
-    <div class="summary-item">
-      <span class="num">78</span>
-      <span class="label">MONSTERS</span>
+
+    <div class="char-timeline">
+      <div class="char-week">
+        <span class="week-label">W01</span>
+        <span class="names"><span class="highlight">파이터</span>(남/여), <span class="highlight">머스킷티어</span>(남/여)</span>
+        <span class="cumul"><strong>4</strong>/60</span>
+        <div class="progress-mini">
+          <div class="fill" style="width:6.7%"></div>
+        </div>
+      </div>
+      <div class="char-week">
+        <span class="week-label">W02</span>
+        <span class="names"><span class="highlight">위자드</span>(남/여), <span class="highlight">워록</span>(남/여)</span>
+        <span class="cumul"><strong>8</strong>/60</span>
+        <div class="progress-mini">
+          <div class="fill" style="width:13.3%"></div>
+        </div>
+      </div>
+      <div class="char-week">
+        <span class="week-label">W03</span>
+        <span class="names"><span class="highlight">스카우트</span>(남/여), 까뜨린느(힘), 아델리나</span>
+        <span class="cumul"><strong>12</strong>/60</span>
+        <div class="progress-mini">
+          <div class="fill" style="width:20%"></div>
+        </div>
+      </div>
+      <div class="char-week">
+        <span class="week-label">W04</span>
+        <span class="names">리사, 코임브라 트루퍼, 음보마, 칼리</span>
+        <span class="cumul"><strong>16</strong>/60</span>
+        <div class="progress-mini">
+          <div class="fill" style="width:26.7%"></div>
+        </div>
+      </div>
+      <div class="char-week">
+        <span class="week-label">W05</span>
+        <span class="names">가르시아, 그라시엘로, 나탈리, 다리아, <span class="highlight">레이븐</span></span>
+        <span class="cumul"><strong>21</strong>/60</span>
+        <div class="progress-mini">
+          <div class="fill" style="width:35%"></div>
+        </div>
+      </div>
+      <div class="char-week">
+        <span class="week-label">W06</span>
+        <span class="names">로르크, 리오, 리오넬, <span class="highlight">발레리아</span>, 빈센트</span>
+        <span class="cumul"><strong>26</strong>/60</span>
+        <div class="progress-mini">
+          <div class="fill" style="width:43.3%"></div>
+        </div>
+      </div>
+      <div class="char-week">
+        <span class="week-label">W07</span>
+        <span class="names">소소, 앙드레, 에두아르도, 엘리사, 아이라완</span>
+        <span class="cumul"><strong>31</strong>/60</span>
+        <div class="progress-mini">
+          <div class="fill" style="width:51.7%"></div>
+        </div>
+      </div>
+      <div class="char-week">
+        <span class="week-label">W08</span>
+        <span class="names">잇지, 잭, 까뜨린느(지능), 제라드, 주안</span>
+        <span class="cumul"><strong>36</strong>/60</span>
+        <div class="progress-mini">
+          <div class="fill" style="width:60%"></div>
+        </div>
+      </div>
+      <div class="char-week">
+        <span class="week-label">W09</span>
+        <span class="names">카자라이네, 쿠르트, 클레어, 클로드, 판필로</span>
+        <span class="cumul"><strong>41</strong>/60</span>
+        <div class="progress-mini">
+          <div class="fill" style="width:68.3%"></div>
+        </div>
+      </div>
+      <div class="char-week">
+        <span class="week-label">W10</span>
+        <span class="names">헬레나, 호세, 백호, 그랑마, <span class="highlight">에밀리아</span></span>
+        <span class="cumul"><strong>46</strong>/60</span>
+        <div class="progress-mini">
+          <div class="fill" style="width:76.7%"></div>
+        </div>
+      </div>
+      <div class="char-week">
+        <span class="week-label">W11</span>
+        <span class="names">아드리아나, 랄프, 샤론, 베로니프, <span class="highlight">소호</span></span>
+        <span class="cumul"><strong>51</strong>/60</span>
+        <div class="progress-mini">
+          <div class="fill" style="width:85%"></div>
+        </div>
+      </div>
+      <div class="char-week">
+        <span class="week-label">W12</span>
+        <span class="names">셜린, 루딘, 셀바, 나르, 베아트리체</span>
+        <span class="cumul"><strong>56</strong>/60</span>
+        <div class="progress-mini">
+          <div class="fill" style="width:93.3%"></div>
+        </div>
+      </div>
+      <div class="char-week">
+        <span class="week-label">W13~14</span>
+        <span class="names">예비 캐릭터 4종 (밸런스 조정용)</span>
+        <span class="cumul"><strong>60</strong>/60</span>
+        <div class="progress-mini">
+          <div class="fill" style="width:100%"></div>
+        </div>
+      </div>
     </div>
-    <div class="summary-item">
-      <span class="num">40+</span>
-      <span class="label">VFX</span>
+
+    <div class="pipeline-note">
+      <div class="icon">&#9881;</div>
+      <div>
+        <div class="steps">
+          <span class="step">NanoBanana 원화 <em>0.5일</em></span>
+          <span class="arrow">&#10132;</span>
+          <span class="step">WAN2.2 애니메이션 <em>0.5일</em></span>
+          <span class="arrow">&#10132;</span>
+          <span class="step">통합 검수 <em>0.5일</em></span>
+        </div>
+        <div class="total">= 1.5일/종 &middot; 주 5종 페이스 &middot; Idle / Move / Attack / Skill 4종 세트</div>
+      </div>
     </div>
-    <div class="summary-item">
-      <span class="num">14</span>
-      <span class="label">WEEKS</span>
+
+    <!-- ═══════════════════════ 2. REGION & MONSTER ═══════════════════════ -->
+    <div class="section-header" style="margin-top:64px;">
+      <div class="section-icon" style="background:rgba(78,204,163,0.15); color:var(--accent-green);">D</div>
+      <div>
+        <h2>Region & Monster Reference</h2>
+        <span class="role-badge role-d">[D] 배경/프랍 아티스트</span>
+      </div>
+      <span class="count">12지역 / 78 몬스터</span>
     </div>
+
+    <!-- Group 1 -->
+    <div class="group-divider early">
+      <h3>Group 1: 클래식 개척로</h3>
+      <span class="group-desc">초반부 지역 01~06 &middot; W01~W08</span>
+    </div>
+
+    <div class="region-grid">
+      <!-- Region 01 -->
+      <div class="region-card group-early">
+        <div class="region-card-header">
+          <span class="region-num">01</span>
+          <div class="region-name">퀸즈게이트<small>Queensgate</small></div>
+          <span class="dna-tag dna-wildlife">Wildlife</span>
+        </div>
+        <div class="region-card-body">
+          <div class="monster-group-label">잡몹 (4종)</div>
+          <div class="mob-list">
+            <span class="mob-tag">갈색 그렘린</span>
+            <span class="mob-tag">초록 그렘린</span>
+            <span class="mob-tag">멧돼지</span>
+            <span class="mob-tag">뿔 허넷</span>
+          </div>
+          <div class="monster-group-label">보스 (3종)</div>
+          <div class="boss-list">
+            <div class="boss-entry">
+              <span class="boss-stage mid">S10 중보스</span>
+              <span class="boss-name">갈색 그렘린 리더</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage elite">S20 엘리트</span>
+              <span class="boss-name">자이언트 뿔 허넷</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage final">S30 최종</span>
+              <span class="boss-name final-boss">다크 그렘린</span>
+            </div>
+          </div>
+        </div>
+        <div class="region-card-footer">
+          <span class="stages">Stage <strong>1~30</strong></span>
+          <span class="week-tag">W01~W02</span>
+        </div>
+      </div>
+
+      <!-- Region 02 -->
+      <div class="region-card group-early">
+        <div class="region-card-header">
+          <span class="region-num">02</span>
+          <div class="region-name">패루초 삼거리<small>Ferruccio Junction</small></div>
+          <span class="dna-tag dna-wildlife">Wildlife</span>
+        </div>
+        <div class="region-card-body">
+          <div class="monster-group-label">잡몹 (4종)</div>
+          <div class="mob-list">
+            <span class="mob-tag">코카트리스</span>
+            <span class="mob-tag">하얀 늑대</span>
+            <span class="mob-tag">만드라고라</span>
+            <span class="mob-tag">리틀 코모도</span>
+          </div>
+          <div class="monster-group-label">보스 (3종)</div>
+          <div class="boss-list">
+            <div class="boss-entry">
+              <span class="boss-stage mid">S10 중보스</span>
+              <span class="boss-name">대형 코카트리스</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage elite">S20 엘리트</span>
+              <span class="boss-name">패루초 석상 수호자</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage final">S30 최종</span>
+              <span class="boss-name final-boss">힐 자이언트</span>
+            </div>
+          </div>
+        </div>
+        <div class="region-card-footer">
+          <span class="stages">Stage <strong>31~60</strong></span>
+          <span class="week-tag">W03~W04</span>
+        </div>
+      </div>
+
+      <!-- Region 03 -->
+      <div class="region-card group-early">
+        <div class="region-card-header">
+          <span class="region-num">03</span>
+          <div class="region-name">알쿠에트 모레자<small>Al Quelt Moreza</small></div>
+          <span class="dna-tag dna-undead">Undead/Daemon</span>
+        </div>
+        <div class="region-card-body">
+          <div class="monster-group-label">잡몹 (4종)</div>
+          <div class="mob-list">
+            <span class="mob-tag">하운드</span>
+            <span class="mob-tag">할로우</span>
+            <span class="mob-tag">유령</span>
+            <span class="mob-tag">해골 병사</span>
+          </div>
+          <div class="monster-group-label">보스 (3종)</div>
+          <div class="boss-list">
+            <div class="boss-entry">
+              <span class="boss-stage mid">S10 중보스</span>
+              <span class="boss-name">케르베라</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage elite">S20 엘리트</span>
+              <span class="boss-name">지그문트</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage final">S30 최종</span>
+              <span class="boss-name final-boss">딜로스 라템</span>
+            </div>
+          </div>
+        </div>
+        <div class="region-card-footer">
+          <span class="stages">Stage <strong>61~90</strong></span>
+          <span class="week-tag">W04~W05</span>
+        </div>
+      </div>
+
+      <!-- Region 04 -->
+      <div class="region-card group-early">
+        <div class="region-card-header">
+          <span class="region-num">04</span>
+          <div class="region-name">왕들의 정원<small>Garden of the Kings</small></div>
+          <span class="dna-tag dna-wildlife">Wildlife</span>
+        </div>
+        <div class="region-card-body">
+          <div class="monster-group-label">잡몹 (4종)</div>
+          <div class="mob-list">
+            <span class="mob-tag">딜로스 라톤</span>
+            <span class="mob-tag">갈색 버팔로</span>
+            <span class="mob-tag">사막 가고일</span>
+            <span class="mob-tag">꿀벌</span>
+          </div>
+          <div class="monster-group-label">보스 (3종)</div>
+          <div class="boss-list">
+            <div class="boss-entry">
+              <span class="boss-stage mid">S10 중보스</span>
+              <span class="boss-name">딜로스 라톤 리더</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage elite">S20 엘리트</span>
+              <span class="boss-name">정원 장식장</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage final">S30 최종</span>
+              <span class="boss-name final-boss">딜로스 라톤 퀸</span>
+            </div>
+          </div>
+        </div>
+        <div class="region-card-footer">
+          <span class="stages">Stage <strong>91~120</strong></span>
+          <span class="week-tag">W05~W06</span>
+        </div>
+      </div>
+
+      <!-- Region 05 -->
+      <div class="region-card group-early">
+        <div class="region-card-header">
+          <span class="region-num">05</span>
+          <div class="region-name">테트라 유적<small>Tetra Ruins</small></div>
+          <span class="dna-tag dna-mixed">Lifeless/Daemon</span>
+        </div>
+        <div class="region-card-body">
+          <div class="monster-group-label">잡몹 (4종)</div>
+          <div class="mob-list">
+            <span class="mob-tag">포비탄</span>
+            <span class="mob-tag">고렘</span>
+            <span class="mob-tag">르푸스 폭스</span>
+            <span class="mob-tag">불꽃 코모도</span>
+          </div>
+          <div class="monster-group-label">보스 (3종)</div>
+          <div class="boss-list">
+            <div class="boss-entry">
+              <span class="boss-stage mid">S10 중보스</span>
+              <span class="boss-name">포비탄 족장</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage elite">S20 엘리트</span>
+              <span class="boss-name">질럿 헤러틱</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage final">S30 최종</span>
+              <span class="boss-name final-boss">트레져 고렘</span>
+            </div>
+          </div>
+        </div>
+        <div class="region-card-footer">
+          <span class="stages">Stage <strong>121~150</strong></span>
+          <span class="week-tag">W06~W07</span>
+        </div>
+      </div>
+
+      <!-- Region 06 -->
+      <div class="region-card group-early">
+        <div class="region-card-header">
+          <span class="region-num">06</span>
+          <div class="region-name">코임브라 항구<small>Port of Coimbra</small></div>
+          <span class="dna-tag dna-mixed">Wildlife/Human</span>
+        </div>
+        <div class="region-card-body">
+          <div class="monster-group-label">잡몹 (4종)</div>
+          <div class="mob-list">
+            <span class="mob-tag">바다 반어인</span>
+            <span class="mob-tag">집게게</span>
+            <span class="mob-tag">술통쓴 문어</span>
+            <span class="mob-tag">해적 밴들리에</span>
+          </div>
+          <div class="monster-group-label">보스 (3종)</div>
+          <div class="boss-list">
+            <div class="boss-entry">
+              <span class="boss-stage mid">S10 중보스</span>
+              <span class="boss-name">거대 집게게</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage elite">S20 엘리트</span>
+              <span class="boss-name">카스토르</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage final">S30 최종</span>
+              <span class="boss-name final-boss">지안트 크랩</span>
+            </div>
+          </div>
+        </div>
+        <div class="region-card-footer">
+          <span class="stages">Stage <strong>151~180</strong></span>
+          <span class="week-tag">W07~W08</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group 2 -->
+    <div class="group-divider mid">
+      <h3>Group 2: 대륙의 심장</h3>
+      <span class="group-desc">중반부 지역 07~12 &middot; W08~W14</span>
+    </div>
+
+    <div class="region-grid">
+      <!-- Region 07 -->
+      <div class="region-card group-mid">
+        <div class="region-card-header">
+          <span class="region-num">07</span>
+          <div class="region-name">지저벨 협곡<small>Jezebello Canyon</small></div>
+          <span class="dna-tag dna-mixed">Wildlife/Lifeless</span>
+        </div>
+        <div class="region-card-body">
+          <div class="monster-group-label">잡몹 (3종)</div>
+          <div class="mob-list">
+            <span class="mob-tag">회색털 늑대</span>
+            <span class="mob-tag">돌껍질 거북</span>
+            <span class="mob-tag">회색 코모도</span>
+          </div>
+          <div class="monster-group-label">보스 (3종)</div>
+          <div class="boss-list">
+            <div class="boss-entry">
+              <span class="boss-stage mid">S10 중보스</span>
+              <span class="boss-name">에이션트 고렘</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage elite">S20 엘리트</span>
+              <span class="boss-name">골든 자이언트</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage final">S30 최종</span>
+              <span class="boss-name final-boss">해적 세퓔베다</span>
+            </div>
+          </div>
+        </div>
+        <div class="region-card-footer">
+          <span class="stages">Stage <strong>181~210</strong></span>
+          <span class="week-tag">W08~W09</span>
+        </div>
+      </div>
+
+      <!-- Region 08 -->
+      <div class="region-card group-mid">
+        <div class="region-card-header">
+          <span class="region-num">08</span>
+          <div class="region-name">포르토 벨로<small>Porto Bello</small></div>
+          <span class="dna-tag dna-undead">Undead</span>
+        </div>
+        <div class="region-card-body">
+          <div class="monster-group-label">잡몹 (3종)</div>
+          <div class="mob-list">
+            <span class="mob-tag">좀비 반어인</span>
+            <span class="mob-tag">어비스 클로</span>
+            <span class="mob-tag">에스쿠도 뻬셰</span>
+          </div>
+          <div class="monster-group-label">보스 (3종)</div>
+          <div class="boss-list">
+            <div class="boss-entry">
+              <span class="boss-stage mid">S10 중보스</span>
+              <span class="boss-name">노지야르 캡틴</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage elite">S20 엘리트</span>
+              <span class="boss-name">파지야르 캡틴</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage final">S30 최종</span>
+              <span class="boss-name final-boss">키메라</span>
+            </div>
+          </div>
+        </div>
+        <div class="region-card-footer">
+          <span class="stages">Stage <strong>211~240</strong></span>
+          <span class="week-tag">W09~W10</span>
+        </div>
+      </div>
+
+      <!-- Region 09 -->
+      <div class="region-card group-mid">
+        <div class="region-card-header">
+          <span class="region-num">09</span>
+          <div class="region-name">버려진 부두<small>Deserted Quay</small></div>
+          <span class="dna-tag dna-mixed">Undead/Wildlife</span>
+        </div>
+        <div class="region-card-body">
+          <div class="monster-group-label">잡몹 (3종)</div>
+          <div class="mob-list">
+            <span class="mob-tag">수호 거북</span>
+            <span class="mob-tag">좀비 반어인</span>
+            <span class="mob-tag">그림리퍼(블루)</span>
+          </div>
+          <div class="monster-group-label">보스 (3종)</div>
+          <div class="boss-list">
+            <div class="boss-entry">
+              <span class="boss-stage mid">S10 중보스</span>
+              <span class="boss-name">대형 수호 거북</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage elite">S20 엘리트</span>
+              <span class="boss-name">무장한 거북</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage final">S30 최종</span>
+              <span class="boss-name final-boss">발란셰</span>
+            </div>
+          </div>
+        </div>
+        <div class="region-card-footer">
+          <span class="stages">Stage <strong>241~270</strong></span>
+          <span class="week-tag">W10~W11</span>
+        </div>
+      </div>
+
+      <!-- Region 10 -->
+      <div class="region-card group-mid">
+        <div class="region-card-header">
+          <span class="region-num">10</span>
+          <div class="region-name">토르쉐 저택<small>Dr. Torsche's Mansion</small></div>
+          <span class="dna-tag dna-lifeless">Lifeless</span>
+        </div>
+        <div class="region-card-body">
+          <div class="monster-group-label">잡몹 (4종)</div>
+          <div class="mob-list">
+            <span class="mob-tag">로이드</span>
+            <span class="mob-tag">월터</span>
+            <span class="mob-tag">돌리</span>
+            <span class="mob-tag">빅터</span>
+          </div>
+          <div class="monster-group-label">보스 (3종)</div>
+          <div class="boss-list">
+            <div class="boss-entry">
+              <span class="boss-stage mid">S10 중보스</span>
+              <span class="boss-name">전기 월터</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage elite">S20 엘리트</span>
+              <span class="boss-name">마이티 빅토르</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage final">S30 최종</span>
+              <span class="boss-name final-boss">레이디 사샤</span>
+            </div>
+          </div>
+        </div>
+        <div class="region-card-footer">
+          <span class="stages">Stage <strong>271~300</strong></span>
+          <span class="week-tag">W11~W12</span>
+        </div>
+      </div>
+
+      <!-- Region 11 -->
+      <div class="region-card group-mid">
+        <div class="region-card-header">
+          <span class="region-num">11</span>
+          <div class="region-name">보나비스타 지류<small>Bonavista River</small></div>
+          <span class="dna-tag dna-wildlife">Wildlife</span>
+        </div>
+        <div class="region-card-body">
+          <div class="monster-group-label">잡몹 (3종)</div>
+          <div class="mob-list">
+            <span class="mob-tag">줄무늬 칼 멧돼지</span>
+            <span class="mob-tag">낫 잠자리</span>
+            <span class="mob-tag">회색 버팔로</span>
+          </div>
+          <div class="monster-group-label">보스 (3종)</div>
+          <div class="boss-list">
+            <div class="boss-entry">
+              <span class="boss-stage mid">S10 중보스</span>
+              <span class="boss-name">대형 줄무늬 멧돼지</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage elite">S20 엘리트</span>
+              <span class="boss-name">보나비스타 가고일</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage final">S30 최종</span>
+              <span class="boss-name final-boss">지안트 코카트리스</span>
+            </div>
+          </div>
+        </div>
+        <div class="region-card-footer">
+          <span class="stages">Stage <strong>301~330</strong></span>
+          <span class="week-tag">W12~W13</span>
+        </div>
+      </div>
+
+      <!-- Region 12 -->
+      <div class="region-card group-mid">
+        <div class="region-card-header">
+          <span class="region-num">12</span>
+          <div class="region-name">튜링엔 숲<small>Thuringen Forest</small></div>
+          <span class="dna-tag dna-wildlife">Wildlife</span>
+        </div>
+        <div class="region-card-body">
+          <div class="monster-group-label">잡몹 (3종)</div>
+          <div class="mob-list">
+            <span class="mob-tag">흰털 늑대</span>
+            <span class="mob-tag">초원 가고일</span>
+            <span class="mob-tag">흑색 버팔로</span>
+          </div>
+          <div class="monster-group-label">보스 (3종)</div>
+          <div class="boss-list">
+            <div class="boss-entry">
+              <span class="boss-stage mid">S10 중보스</span>
+              <span class="boss-name">흰털 늑대 왕</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage elite">S20 엘리트</span>
+              <span class="boss-name">튜링엔 가고일 리더</span>
+            </div>
+            <div class="boss-entry">
+              <span class="boss-stage final">S30 최종</span>
+              <span class="boss-name final-boss">해바라기 민들레 고릴라</span>
+            </div>
+          </div>
+        </div>
+        <div class="region-card-footer">
+          <span class="stages">Stage <strong>331~360</strong></span>
+          <span class="week-tag">W13~W14</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Monster Stats -->
+    <div class="stats-grid" style="margin-top:28px;">
+      <div class="stat-card">
+        <div class="stat-value">12</div>
+        <div class="stat-label">3D 배경 지역</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">42</div>
+        <div class="stat-label">잡몹 종류</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">36</div>
+        <div class="stat-label">보스 종류</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">78</div>
+        <div class="stat-label">몬스터 총계</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">360</div>
+        <div class="stat-label">총 스테이지</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ 3. BACKGROUND SCHEDULE ═══════════════════════ -->
+    <div class="section-header" style="margin-top:64px;">
+      <div class="section-icon" style="background:rgba(78,204,163,0.15); color:var(--accent-green);">D</div>
+      <div>
+        <h2>Environment Production Timeline</h2>
+        <span class="role-badge role-d">[D] 배경 아티스트</span>
+      </div>
+      <span class="count">1지역 = 5일</span>
+    </div>
+
+    <div class="pipeline-note" style="margin-bottom:20px; border-color: rgba(78,204,163,0.2);">
+      <div class="icon">&#127758;</div>
+      <div>
+        <div class="steps">
+          <span class="step">3D Terrain <em>3일</em></span>
+          <span class="arrow">&#10132;</span>
+          <span class="step">텍스처 + 프랍 <em>2일</em></span>
+          <span class="arrow">&#10132;</span>
+          <span class="step">라이팅/포스트 검수</span>
+        </div>
+        <div class="total">= 5일/지역 (1주) &middot; ComfyUI 보조 활용</div>
+      </div>
+    </div>
+
+    <div class="env-timeline">
+      <div class="env-week">
+        <span class="week-label">W01</span>
+        <span class="task-desc"><span class="region-highlight">01 퀸즈게이트</span> &mdash; Terrain 제작</span>
+        <span class="task-phase phase-terrain">Terrain</span>
+      </div>
+      <div class="env-week">
+        <span class="week-label">W02</span>
+        <span class="task-desc"><span class="region-highlight">01 퀸즈게이트</span> &mdash; 프랍/라이팅 완성</span>
+        <span class="task-phase phase-complete">Complete</span>
+      </div>
+      <div class="env-week">
+        <span class="week-label">W03</span>
+        <span class="task-desc"><span class="region-highlight">02 패루초 삼거리</span> &mdash; Terrain 제작</span>
+        <span class="task-phase phase-terrain">Terrain</span>
+      </div>
+      <div class="env-week">
+        <span class="week-label">W04</span>
+        <span class="task-desc"><span class="region-highlight">02 패루초</span> 완성 + <span class="region-highlight">03
+            AQM</span> 착수</span>
+        <span class="task-phase phase-both">Complete + Start</span>
+      </div>
+      <div class="env-week">
+        <span class="week-label">W05</span>
+        <span class="task-desc"><span class="region-highlight">03 AQM</span> 완성 + <span class="region-highlight">04
+            왕들의정원</span> 착수</span>
+        <span class="task-phase phase-both">Complete + Start</span>
+      </div>
+      <div class="env-week">
+        <span class="week-label">W06</span>
+        <span class="task-desc"><span class="region-highlight">04 왕들의정원</span> 완성 + <span class="region-highlight">05
+            테트라</span> 착수</span>
+        <span class="task-phase phase-both">Complete + Start</span>
+      </div>
+      <div class="env-week">
+        <span class="week-label">W07</span>
+        <span class="task-desc"><span class="region-highlight">05 테트라</span> 완성 + <span class="region-highlight">06
+            코임브라</span> 착수</span>
+        <span class="task-phase phase-both">Complete + Start</span>
+      </div>
+      <div class="env-week">
+        <span class="week-label">W08</span>
+        <span class="task-desc"><span class="region-highlight">06 코임브라</span> 완성 + <span class="region-highlight">07
+            지저벨</span> 착수</span>
+        <span class="task-phase phase-both">Complete + Start</span>
+      </div>
+      <div class="env-week">
+        <span class="week-label">W09</span>
+        <span class="task-desc"><span class="region-highlight">07 지저벨</span> 완성 + <span class="region-highlight">08
+            포르토벨로</span> 착수</span>
+        <span class="task-phase phase-both">Complete + Start</span>
+      </div>
+      <div class="env-week">
+        <span class="week-label">W10</span>
+        <span class="task-desc"><span class="region-highlight">08 포르토벨로</span> 완성 + <span class="region-highlight">09
+            버려진부두</span> 착수</span>
+        <span class="task-phase phase-both">Complete + Start</span>
+      </div>
+      <div class="env-week">
+        <span class="week-label">W11</span>
+        <span class="task-desc"><span class="region-highlight">09 버려진부두</span> 완성 + <span class="region-highlight">10
+            토르쉐</span> 착수</span>
+        <span class="task-phase phase-both">Complete + Start</span>
+      </div>
+      <div class="env-week">
+        <span class="week-label">W12</span>
+        <span class="task-desc"><span class="region-highlight">10 토르쉐</span> 완성 + <span class="region-highlight">11
+            보나비스타</span> 착수</span>
+        <span class="task-phase phase-both">Complete + Start</span>
+      </div>
+      <div class="env-week">
+        <span class="week-label">W13</span>
+        <span class="task-desc"><span class="region-highlight">11 보나비스타</span> 완성 + <span class="region-highlight">12
+            튜링엔숲</span> 착수</span>
+        <span class="task-phase phase-both">Complete + Start</span>
+      </div>
+      <div class="env-week">
+        <span class="week-label">W14</span>
+        <span class="task-desc"><span class="region-highlight">12 튜링엔숲</span> 완성 + 전체 검수</span>
+        <span class="task-phase phase-complete">Final QA</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ 4. VFX / SFX ═══════════════════════ -->
+    <div class="section-header" style="margin-top:64px;">
+      <div class="section-icon" style="background:rgba(217,138,74,0.15); color:var(--accent-orange);">FX</div>
+      <div>
+        <h2>Sound & VFX Schedule</h2>
+      </div>
+      <span class="count">BGM 14 / SFX 90 / VFX 40</span>
+    </div>
+
+    <div class="fx-grid">
+      <div class="fx-card">
+        <div class="fx-header">
+          <span class="fx-period">W01~W02</span>
+        </div>
+        <div class="fx-items">
+          <div class="fx-item"><span class="fx-type bgm">BGM</span> 메인 테마 + 지역 1 BGM</div>
+          <div class="fx-item"><span class="fx-type sfx">SFX</span> 기본 타격음 10종</div>
+          <div class="fx-item"><span class="fx-type vfx">VFX</span> 기본 히트 이펙트 5종</div>
+        </div>
+      </div>
+      <div class="fx-card">
+        <div class="fx-header">
+          <span class="fx-period">W03~W04</span>
+        </div>
+        <div class="fx-items">
+          <div class="fx-item"><span class="fx-type bgm">BGM</span> 지역 2~3 BGM</div>
+          <div class="fx-item"><span class="fx-type sfx">SFX</span> 스킬 SFX 20종</div>
+          <div class="fx-item"><span class="fx-type vfx">VFX</span> 스킬 이펙트 10종</div>
+        </div>
+      </div>
+      <div class="fx-card">
+        <div class="fx-header">
+          <span class="fx-period">W05~W06</span>
+        </div>
+        <div class="fx-items">
+          <div class="fx-item"><span class="fx-type bgm">BGM</span> 지역 4~5 BGM</div>
+          <div class="fx-item"><span class="fx-type sfx">SFX</span> 스킬 SFX 20종</div>
+          <div class="fx-item"><span class="fx-type vfx">VFX</span> 스킬 이펙트 10종</div>
+        </div>
+      </div>
+      <div class="fx-card">
+        <div class="fx-header">
+          <span class="fx-period">W07~W08</span>
+        </div>
+        <div class="fx-items">
+          <div class="fx-item"><span class="fx-type bgm">BGM</span> 지역 6~7 BGM</div>
+          <div class="fx-item"><span class="fx-type sfx">SFX</span> UI SFX 15종 (버튼/레벨업/소환)</div>
+          <div class="fx-item"><span class="fx-type vfx">VFX</span> 소환 연출 이펙트</div>
+        </div>
+      </div>
+      <div class="fx-card">
+        <div class="fx-header">
+          <span class="fx-period">W09~W10</span>
+        </div>
+        <div class="fx-items">
+          <div class="fx-item"><span class="fx-type bgm">BGM</span> 지역 8~9 BGM</div>
+          <div class="fx-item"><span class="fx-type sfx">SFX</span> 보스 전용 SFX 12종</div>
+          <div class="fx-item"><span class="fx-type vfx">VFX</span> 보스 스킬 이펙트</div>
+        </div>
+      </div>
+      <div class="fx-card">
+        <div class="fx-header">
+          <span class="fx-period">W11~W12</span>
+        </div>
+        <div class="fx-items">
+          <div class="fx-item"><span class="fx-type bgm">BGM</span> 지역 10~11 BGM</div>
+          <div class="fx-item"><span class="fx-type sfx">SFX</span> 환경 SFX 10종</div>
+          <div class="fx-item"><span class="fx-type vfx">VFX</span> 환경 파티클</div>
+        </div>
+      </div>
+      <div class="fx-card">
+        <div class="fx-header">
+          <span class="fx-period">W13~W14</span>
+        </div>
+        <div class="fx-items">
+          <div class="fx-item"><span class="fx-type bgm">BGM</span> 지역 12 BGM + 폴리싱</div>
+          <div class="fx-item"><span class="fx-type sfx">SFX</span> 누락 SFX 보충</div>
+          <div class="fx-item"><span class="fx-type vfx">VFX</span> 전체 검수</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ 5. FINAL CHECKLIST ═══════════════════════ -->
+    <div class="section-header" style="margin-top:64px;">
+      <div class="section-icon" style="background:rgba(212,168,67,0.15); color:var(--gold);">&#10003;</div>
+      <h2>Art Deliverables Checklist</h2>
+    </div>
+
+    <div class="checklist">
+      <div class="checklist-item">
+        <div class="ck-box"></div>캐릭터 일러스트 (640x960)<div class="ck-qty">60종</div>
+      </div>
+      <div class="checklist-item">
+        <div class="ck-box"></div>캐릭터 애니메이션 (4모션)<div class="ck-qty">240세트</div>
+      </div>
+      <div class="checklist-item">
+        <div class="ck-box"></div>3D 배경 Terrain<div class="ck-qty">12지역</div>
+      </div>
+      <div class="checklist-item">
+        <div class="ck-box"></div>배경 프랍/텍스처 세트<div class="ck-qty">12세트</div>
+      </div>
+      <div class="checklist-item">
+        <div class="ck-box"></div>잡몹 스프라이트<div class="ck-qty">42종</div>
+      </div>
+      <div class="checklist-item">
+        <div class="ck-box"></div>보스 스프라이트<div class="ck-qty">36종</div>
+      </div>
+      <div class="checklist-item">
+        <div class="ck-box"></div>히트 / 스킬 VFX<div class="ck-qty">40종</div>
+      </div>
+      <div class="checklist-item">
+        <div class="ck-box"></div>BGM 트랙<div class="ck-qty">14곡</div>
+      </div>
+      <div class="checklist-item">
+        <div class="ck-box"></div>SFX 세트<div class="ck-qty">90종</div>
+      </div>
+      <div class="checklist-item">
+        <div class="ck-box"></div>UI 아이콘 (장비/아이템)<div class="ck-qty">130+</div>
+      </div>
+      <div class="checklist-item">
+        <div class="ck-box"></div>가챠 배너 일러스트<div class="ck-qty">5장</div>
+      </div>
+      <div class="checklist-item">
+        <div class="ck-box"></div>로딩 / 스플래시 화면<div class="ck-qty">1세트</div>
+      </div>
+    </div>
+
+    <!-- Risk -->
+    <div class="risk-banner">
+      <h3>&#9888; Art Risk Mitigation</h3>
+      <div class="risk-grid">
+        <div class="risk-item">
+          <span class="risk-label">캐릭터 주 5종 미달</span>
+          <span class="risk-fix">50종으로 축소, 등급 재분배로 대응</span>
+        </div>
+        <div class="risk-item">
+          <span class="risk-label">배경 주 1지역 미달</span>
+          <span class="risk-fix">10지역으로 축소, 팔레트 스왑 활용</span>
+        </div>
+        <div class="risk-item">
+          <span class="risk-label">사운드/이펙트 지연</span>
+          <span class="risk-fix">플레이스홀더 에셋으로 우선 빌드</span>
+        </div>
+        <div class="risk-item">
+          <span class="risk-label">AI 파이프라인 불안정</span>
+          <span class="risk-fix">수동 제작 병행, 핵심 캐릭터 우선 처리</span>
+        </div>
+      </div>
+    </div>
+
   </div>
-</header>
 
-<div class="container">
+  <!-- Footer -->
+  <footer class="doc-footer">
+    <div class="logo-text">GRANADO ESPADA AFK &middot; IMC GAMES</div>
+    <div class="gen-date">Generated 2025.02.25 &middot; Art Production Schedule v1.0</div>
+  </footer>
 
-  <!-- ═══════════════════════ 1. CHARACTER SCHEDULE ═══════════════════════ -->
-  <div class="section-header">
-    <div class="section-icon" style="background:rgba(155,111,217,0.15); color:var(--accent-purple);">C</div>
-    <div>
-      <h2>Character Artist Schedule</h2>
-      <span class="role-badge role-c">[C] 캐릭터 아티스트</span>
-    </div>
-    <span class="count">60종 / 14주</span>
-  </div>
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js";
 
-  <div class="char-timeline">
-    <div class="char-week">
-      <span class="week-label">W01</span>
-      <span class="names"><span class="highlight">파이터</span>(남/여), <span class="highlight">머스킷티어</span>(남/여)</span>
-      <span class="cumul"><strong>4</strong>/60</span>
-      <div class="progress-mini"><div class="fill" style="width:6.7%"></div></div>
-    </div>
-    <div class="char-week">
-      <span class="week-label">W02</span>
-      <span class="names"><span class="highlight">위자드</span>(남/여), <span class="highlight">워록</span>(남/여)</span>
-      <span class="cumul"><strong>8</strong>/60</span>
-      <div class="progress-mini"><div class="fill" style="width:13.3%"></div></div>
-    </div>
-    <div class="char-week">
-      <span class="week-label">W03</span>
-      <span class="names"><span class="highlight">스카우트</span>(남/여), 까뜨린느(힘), 아델리나</span>
-      <span class="cumul"><strong>12</strong>/60</span>
-      <div class="progress-mini"><div class="fill" style="width:20%"></div></div>
-    </div>
-    <div class="char-week">
-      <span class="week-label">W04</span>
-      <span class="names">리사, 코임브라 트루퍼, 음보마, 칼리</span>
-      <span class="cumul"><strong>16</strong>/60</span>
-      <div class="progress-mini"><div class="fill" style="width:26.7%"></div></div>
-    </div>
-    <div class="char-week">
-      <span class="week-label">W05</span>
-      <span class="names">가르시아, 그라시엘로, 나탈리, 다리아, <span class="highlight">레이븐</span></span>
-      <span class="cumul"><strong>21</strong>/60</span>
-      <div class="progress-mini"><div class="fill" style="width:35%"></div></div>
-    </div>
-    <div class="char-week">
-      <span class="week-label">W06</span>
-      <span class="names">로르크, 리오, 리오넬, <span class="highlight">발레리아</span>, 빈센트</span>
-      <span class="cumul"><strong>26</strong>/60</span>
-      <div class="progress-mini"><div class="fill" style="width:43.3%"></div></div>
-    </div>
-    <div class="char-week">
-      <span class="week-label">W07</span>
-      <span class="names">소소, 앙드레, 에두아르도, 엘리사, 아이라완</span>
-      <span class="cumul"><strong>31</strong>/60</span>
-      <div class="progress-mini"><div class="fill" style="width:51.7%"></div></div>
-    </div>
-    <div class="char-week">
-      <span class="week-label">W08</span>
-      <span class="names">잇지, 잭, 까뜨린느(지능), 제라드, 주안</span>
-      <span class="cumul"><strong>36</strong>/60</span>
-      <div class="progress-mini"><div class="fill" style="width:60%"></div></div>
-    </div>
-    <div class="char-week">
-      <span class="week-label">W09</span>
-      <span class="names">카자라이네, 쿠르트, 클레어, 클로드, 판필로</span>
-      <span class="cumul"><strong>41</strong>/60</span>
-      <div class="progress-mini"><div class="fill" style="width:68.3%"></div></div>
-    </div>
-    <div class="char-week">
-      <span class="week-label">W10</span>
-      <span class="names">헬레나, 호세, 백호, 그랑마, <span class="highlight">에밀리아</span></span>
-      <span class="cumul"><strong>46</strong>/60</span>
-      <div class="progress-mini"><div class="fill" style="width:76.7%"></div></div>
-    </div>
-    <div class="char-week">
-      <span class="week-label">W11</span>
-      <span class="names">아드리아나, 랄프, 샤론, 베로니프, <span class="highlight">소호</span></span>
-      <span class="cumul"><strong>51</strong>/60</span>
-      <div class="progress-mini"><div class="fill" style="width:85%"></div></div>
-    </div>
-    <div class="char-week">
-      <span class="week-label">W12</span>
-      <span class="names">셜린, 루딘, 셀바, 나르, 베아트리체</span>
-      <span class="cumul"><strong>56</strong>/60</span>
-      <div class="progress-mini"><div class="fill" style="width:93.3%"></div></div>
-    </div>
-    <div class="char-week">
-      <span class="week-label">W13~14</span>
-      <span class="names">예비 캐릭터 4종 (밸런스 조정용)</span>
-      <span class="cumul"><strong>60</strong>/60</span>
-      <div class="progress-mini"><div class="fill" style="width:100%"></div></div>
-    </div>
-  </div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAshoIjc2zUws3LH6zhOSqG_ba8RMY1o6I",
+      authDomain: "granado-afk-schedule.firebaseapp.com",
+      projectId: "granado-afk-schedule",
+      storageBucket: "granado-afk-schedule.firebasestorage.app",
+      messagingSenderId: "152008333815",
+      appId: "1:152008333815:web:6d09a24a3709228c3736f2"
+    };
 
-  <div class="pipeline-note">
-    <div class="icon">&#9881;</div>
-    <div>
-      <div class="steps">
-        <span class="step">NanoBanana 원화 <em>0.5일</em></span>
-        <span class="arrow">&#10132;</span>
-        <span class="step">WAN2.2 애니메이션 <em>0.5일</em></span>
-        <span class="arrow">&#10132;</span>
-        <span class="step">통합 검수 <em>0.5일</em></span>
-      </div>
-      <div class="total">= 1.5일/종 &middot; 주 5종 페이스 &middot; Idle / Move / Attack / Skill 4종 세트</div>
-    </div>
-  </div>
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-  <!-- ═══════════════════════ 2. REGION & MONSTER ═══════════════════════ -->
-  <div class="section-header" style="margin-top:64px;">
-    <div class="section-icon" style="background:rgba(78,204,163,0.15); color:var(--accent-green);">D</div>
-    <div>
-      <h2>Region & Monster Reference</h2>
-      <span class="role-badge role-d">[D] 배경/프랍 아티스트</span>
-    </div>
-    <span class="count">12지역 / 78 몬스터</span>
-  </div>
+    document.addEventListener('DOMContentLoaded', () => {
+      const checklistItems = document.querySelectorAll('.checklist-item');
 
-  <!-- Group 1 -->
-  <div class="group-divider early">
-    <h3>Group 1: 클래식 개척로</h3>
-    <span class="group-desc">초반부 지역 01~06 &middot; W01~W08</span>
-  </div>
+      checklistItems.forEach((item, index) => {
+        const ckBox = item.querySelector('.ck-box');
+        if (!ckBox) return;
 
-  <div class="region-grid">
-    <!-- Region 01 -->
-    <div class="region-card group-early">
-      <div class="region-card-header">
-        <span class="region-num">01</span>
-        <div class="region-name">퀸즈게이트<small>Queensgate</small></div>
-        <span class="dna-tag dna-wildlife">Wildlife</span>
-      </div>
-      <div class="region-card-body">
-        <div class="monster-group-label">잡몹 (4종)</div>
-        <div class="mob-list">
-          <span class="mob-tag">갈색 그렘린</span>
-          <span class="mob-tag">초록 그렘린</span>
-          <span class="mob-tag">멧돼지</span>
-          <span class="mob-tag">뿔 허넷</span>
-        </div>
-        <div class="monster-group-label">보스 (3종)</div>
-        <div class="boss-list">
-          <div class="boss-entry">
-            <span class="boss-stage mid">S10 중보스</span>
-            <span class="boss-name">갈색 그렘린 리더</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage elite">S20 엘리트</span>
-            <span class="boss-name">자이언트 뿔 허넷</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage final">S30 최종</span>
-            <span class="boss-name final-boss">다크 그렘린</span>
-          </div>
-        </div>
-      </div>
-      <div class="region-card-footer">
-        <span class="stages">Stage <strong>1~30</strong></span>
-        <span class="week-tag">W01~W02</span>
-      </div>
-    </div>
+        item.style.cursor = 'pointer';
+        item.style.userSelect = 'none';
+        ckBox.style.transition = 'all 0.2s';
+        ckBox.style.display = 'flex';
+        ckBox.style.alignItems = 'center';
+        ckBox.style.justifyContent = 'center';
+        ckBox.style.color = 'var(--bg-dark)';
+        ckBox.style.fontWeight = '900';
+        ckBox.style.fontSize = '14px';
 
-    <!-- Region 02 -->
-    <div class="region-card group-early">
-      <div class="region-card-header">
-        <span class="region-num">02</span>
-        <div class="region-name">패루초 삼거리<small>Ferruccio Junction</small></div>
-        <span class="dna-tag dna-wildlife">Wildlife</span>
-      </div>
-      <div class="region-card-body">
-        <div class="monster-group-label">잡몹 (4종)</div>
-        <div class="mob-list">
-          <span class="mob-tag">코카트리스</span>
-          <span class="mob-tag">하얀 늑대</span>
-          <span class="mob-tag">만드라고라</span>
-          <span class="mob-tag">리틀 코모도</span>
-        </div>
-        <div class="monster-group-label">보스 (3종)</div>
-        <div class="boss-list">
-          <div class="boss-entry">
-            <span class="boss-stage mid">S10 중보스</span>
-            <span class="boss-name">대형 코카트리스</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage elite">S20 엘리트</span>
-            <span class="boss-name">패루초 석상 수호자</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage final">S30 최종</span>
-            <span class="boss-name final-boss">힐 자이언트</span>
-          </div>
-        </div>
-      </div>
-      <div class="region-card-footer">
-        <span class="stages">Stage <strong>31~60</strong></span>
-        <span class="week-tag">W03~W04</span>
-      </div>
-    </div>
+        const itemId = 'chk_' + index;
+        const dbRef = ref(db, 'schedule_checks/' + itemId);
 
-    <!-- Region 03 -->
-    <div class="region-card group-early">
-      <div class="region-card-header">
-        <span class="region-num">03</span>
-        <div class="region-name">알쿠에트 모레자<small>Al Quelt Moreza</small></div>
-        <span class="dna-tag dna-undead">Undead/Daemon</span>
-      </div>
-      <div class="region-card-body">
-        <div class="monster-group-label">잡몹 (4종)</div>
-        <div class="mob-list">
-          <span class="mob-tag">하운드</span>
-          <span class="mob-tag">할로우</span>
-          <span class="mob-tag">유령</span>
-          <span class="mob-tag">해골 병사</span>
-        </div>
-        <div class="monster-group-label">보스 (3종)</div>
-        <div class="boss-list">
-          <div class="boss-entry">
-            <span class="boss-stage mid">S10 중보스</span>
-            <span class="boss-name">케르베라</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage elite">S20 엘리트</span>
-            <span class="boss-name">지그문트</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage final">S30 최종</span>
-            <span class="boss-name final-boss">딜로스 라템</span>
-          </div>
-        </div>
-      </div>
-      <div class="region-card-footer">
-        <span class="stages">Stage <strong>61~90</strong></span>
-        <span class="week-tag">W04~W05</span>
-      </div>
-    </div>
+        let isChecked = false;
 
-    <!-- Region 04 -->
-    <div class="region-card group-early">
-      <div class="region-card-header">
-        <span class="region-num">04</span>
-        <div class="region-name">왕들의 정원<small>Garden of the Kings</small></div>
-        <span class="dna-tag dna-wildlife">Wildlife</span>
-      </div>
-      <div class="region-card-body">
-        <div class="monster-group-label">잡몹 (4종)</div>
-        <div class="mob-list">
-          <span class="mob-tag">딜로스 라톤</span>
-          <span class="mob-tag">갈색 버팔로</span>
-          <span class="mob-tag">사막 가고일</span>
-          <span class="mob-tag">꿀벌</span>
-        </div>
-        <div class="monster-group-label">보스 (3종)</div>
-        <div class="boss-list">
-          <div class="boss-entry">
-            <span class="boss-stage mid">S10 중보스</span>
-            <span class="boss-name">딜로스 라톤 리더</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage elite">S20 엘리트</span>
-            <span class="boss-name">정원 장식장</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage final">S30 최종</span>
-            <span class="boss-name final-boss">딜로스 라톤 퀸</span>
-          </div>
-        </div>
-      </div>
-      <div class="region-card-footer">
-        <span class="stages">Stage <strong>91~120</strong></span>
-        <span class="week-tag">W05~W06</span>
-      </div>
-    </div>
+        // Listen for changes from Firebase
+        onValue(dbRef, (snapshot) => {
+          isChecked = !!snapshot.val();
+          if (isChecked) {
+            ckBox.style.background = 'var(--gold)';
+            ckBox.style.borderColor = 'var(--gold)';
+            ckBox.innerHTML = '&#10003;';
+            item.style.opacity = '0.6';
+          } else {
+            ckBox.style.background = 'transparent';
+            ckBox.style.borderColor = 'var(--border)';
+            ckBox.innerHTML = '';
+            item.style.opacity = '1';
+          }
+        });
 
-    <!-- Region 05 -->
-    <div class="region-card group-early">
-      <div class="region-card-header">
-        <span class="region-num">05</span>
-        <div class="region-name">테트라 유적<small>Tetra Ruins</small></div>
-        <span class="dna-tag dna-mixed">Lifeless/Daemon</span>
-      </div>
-      <div class="region-card-body">
-        <div class="monster-group-label">잡몹 (4종)</div>
-        <div class="mob-list">
-          <span class="mob-tag">포비탄</span>
-          <span class="mob-tag">고렘</span>
-          <span class="mob-tag">르푸스 폭스</span>
-          <span class="mob-tag">불꽃 코모도</span>
-        </div>
-        <div class="monster-group-label">보스 (3종)</div>
-        <div class="boss-list">
-          <div class="boss-entry">
-            <span class="boss-stage mid">S10 중보스</span>
-            <span class="boss-name">포비탄 족장</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage elite">S20 엘리트</span>
-            <span class="boss-name">질럿 헤러틱</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage final">S30 최종</span>
-            <span class="boss-name final-boss">트레져 고렘</span>
-          </div>
-        </div>
-      </div>
-      <div class="region-card-footer">
-        <span class="stages">Stage <strong>121~150</strong></span>
-        <span class="week-tag">W06~W07</span>
-      </div>
-    </div>
-
-    <!-- Region 06 -->
-    <div class="region-card group-early">
-      <div class="region-card-header">
-        <span class="region-num">06</span>
-        <div class="region-name">코임브라 항구<small>Port of Coimbra</small></div>
-        <span class="dna-tag dna-mixed">Wildlife/Human</span>
-      </div>
-      <div class="region-card-body">
-        <div class="monster-group-label">잡몹 (4종)</div>
-        <div class="mob-list">
-          <span class="mob-tag">바다 반어인</span>
-          <span class="mob-tag">집게게</span>
-          <span class="mob-tag">술통쓴 문어</span>
-          <span class="mob-tag">해적 밴들리에</span>
-        </div>
-        <div class="monster-group-label">보스 (3종)</div>
-        <div class="boss-list">
-          <div class="boss-entry">
-            <span class="boss-stage mid">S10 중보스</span>
-            <span class="boss-name">거대 집게게</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage elite">S20 엘리트</span>
-            <span class="boss-name">카스토르</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage final">S30 최종</span>
-            <span class="boss-name final-boss">지안트 크랩</span>
-          </div>
-        </div>
-      </div>
-      <div class="region-card-footer">
-        <span class="stages">Stage <strong>151~180</strong></span>
-        <span class="week-tag">W07~W08</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Group 2 -->
-  <div class="group-divider mid">
-    <h3>Group 2: 대륙의 심장</h3>
-    <span class="group-desc">중반부 지역 07~12 &middot; W08~W14</span>
-  </div>
-
-  <div class="region-grid">
-    <!-- Region 07 -->
-    <div class="region-card group-mid">
-      <div class="region-card-header">
-        <span class="region-num">07</span>
-        <div class="region-name">지저벨 협곡<small>Jezebello Canyon</small></div>
-        <span class="dna-tag dna-mixed">Wildlife/Lifeless</span>
-      </div>
-      <div class="region-card-body">
-        <div class="monster-group-label">잡몹 (3종)</div>
-        <div class="mob-list">
-          <span class="mob-tag">회색털 늑대</span>
-          <span class="mob-tag">돌껍질 거북</span>
-          <span class="mob-tag">회색 코모도</span>
-        </div>
-        <div class="monster-group-label">보스 (3종)</div>
-        <div class="boss-list">
-          <div class="boss-entry">
-            <span class="boss-stage mid">S10 중보스</span>
-            <span class="boss-name">에이션트 고렘</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage elite">S20 엘리트</span>
-            <span class="boss-name">골든 자이언트</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage final">S30 최종</span>
-            <span class="boss-name final-boss">해적 세퓔베다</span>
-          </div>
-        </div>
-      </div>
-      <div class="region-card-footer">
-        <span class="stages">Stage <strong>181~210</strong></span>
-        <span class="week-tag">W08~W09</span>
-      </div>
-    </div>
-
-    <!-- Region 08 -->
-    <div class="region-card group-mid">
-      <div class="region-card-header">
-        <span class="region-num">08</span>
-        <div class="region-name">포르토 벨로<small>Porto Bello</small></div>
-        <span class="dna-tag dna-undead">Undead</span>
-      </div>
-      <div class="region-card-body">
-        <div class="monster-group-label">잡몹 (3종)</div>
-        <div class="mob-list">
-          <span class="mob-tag">좀비 반어인</span>
-          <span class="mob-tag">어비스 클로</span>
-          <span class="mob-tag">에스쿠도 뻬셰</span>
-        </div>
-        <div class="monster-group-label">보스 (3종)</div>
-        <div class="boss-list">
-          <div class="boss-entry">
-            <span class="boss-stage mid">S10 중보스</span>
-            <span class="boss-name">노지야르 캡틴</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage elite">S20 엘리트</span>
-            <span class="boss-name">파지야르 캡틴</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage final">S30 최종</span>
-            <span class="boss-name final-boss">키메라</span>
-          </div>
-        </div>
-      </div>
-      <div class="region-card-footer">
-        <span class="stages">Stage <strong>211~240</strong></span>
-        <span class="week-tag">W09~W10</span>
-      </div>
-    </div>
-
-    <!-- Region 09 -->
-    <div class="region-card group-mid">
-      <div class="region-card-header">
-        <span class="region-num">09</span>
-        <div class="region-name">버려진 부두<small>Deserted Quay</small></div>
-        <span class="dna-tag dna-mixed">Undead/Wildlife</span>
-      </div>
-      <div class="region-card-body">
-        <div class="monster-group-label">잡몹 (3종)</div>
-        <div class="mob-list">
-          <span class="mob-tag">수호 거북</span>
-          <span class="mob-tag">좀비 반어인</span>
-          <span class="mob-tag">그림리퍼(블루)</span>
-        </div>
-        <div class="monster-group-label">보스 (3종)</div>
-        <div class="boss-list">
-          <div class="boss-entry">
-            <span class="boss-stage mid">S10 중보스</span>
-            <span class="boss-name">대형 수호 거북</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage elite">S20 엘리트</span>
-            <span class="boss-name">무장한 거북</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage final">S30 최종</span>
-            <span class="boss-name final-boss">발란셰</span>
-          </div>
-        </div>
-      </div>
-      <div class="region-card-footer">
-        <span class="stages">Stage <strong>241~270</strong></span>
-        <span class="week-tag">W10~W11</span>
-      </div>
-    </div>
-
-    <!-- Region 10 -->
-    <div class="region-card group-mid">
-      <div class="region-card-header">
-        <span class="region-num">10</span>
-        <div class="region-name">토르쉐 저택<small>Dr. Torsche's Mansion</small></div>
-        <span class="dna-tag dna-lifeless">Lifeless</span>
-      </div>
-      <div class="region-card-body">
-        <div class="monster-group-label">잡몹 (4종)</div>
-        <div class="mob-list">
-          <span class="mob-tag">로이드</span>
-          <span class="mob-tag">월터</span>
-          <span class="mob-tag">돌리</span>
-          <span class="mob-tag">빅터</span>
-        </div>
-        <div class="monster-group-label">보스 (3종)</div>
-        <div class="boss-list">
-          <div class="boss-entry">
-            <span class="boss-stage mid">S10 중보스</span>
-            <span class="boss-name">전기 월터</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage elite">S20 엘리트</span>
-            <span class="boss-name">마이티 빅토르</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage final">S30 최종</span>
-            <span class="boss-name final-boss">레이디 사샤</span>
-          </div>
-        </div>
-      </div>
-      <div class="region-card-footer">
-        <span class="stages">Stage <strong>271~300</strong></span>
-        <span class="week-tag">W11~W12</span>
-      </div>
-    </div>
-
-    <!-- Region 11 -->
-    <div class="region-card group-mid">
-      <div class="region-card-header">
-        <span class="region-num">11</span>
-        <div class="region-name">보나비스타 지류<small>Bonavista River</small></div>
-        <span class="dna-tag dna-wildlife">Wildlife</span>
-      </div>
-      <div class="region-card-body">
-        <div class="monster-group-label">잡몹 (3종)</div>
-        <div class="mob-list">
-          <span class="mob-tag">줄무늬 칼 멧돼지</span>
-          <span class="mob-tag">낫 잠자리</span>
-          <span class="mob-tag">회색 버팔로</span>
-        </div>
-        <div class="monster-group-label">보스 (3종)</div>
-        <div class="boss-list">
-          <div class="boss-entry">
-            <span class="boss-stage mid">S10 중보스</span>
-            <span class="boss-name">대형 줄무늬 멧돼지</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage elite">S20 엘리트</span>
-            <span class="boss-name">보나비스타 가고일</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage final">S30 최종</span>
-            <span class="boss-name final-boss">지안트 코카트리스</span>
-          </div>
-        </div>
-      </div>
-      <div class="region-card-footer">
-        <span class="stages">Stage <strong>301~330</strong></span>
-        <span class="week-tag">W12~W13</span>
-      </div>
-    </div>
-
-    <!-- Region 12 -->
-    <div class="region-card group-mid">
-      <div class="region-card-header">
-        <span class="region-num">12</span>
-        <div class="region-name">튜링엔 숲<small>Thuringen Forest</small></div>
-        <span class="dna-tag dna-wildlife">Wildlife</span>
-      </div>
-      <div class="region-card-body">
-        <div class="monster-group-label">잡몹 (3종)</div>
-        <div class="mob-list">
-          <span class="mob-tag">흰털 늑대</span>
-          <span class="mob-tag">초원 가고일</span>
-          <span class="mob-tag">흑색 버팔로</span>
-        </div>
-        <div class="monster-group-label">보스 (3종)</div>
-        <div class="boss-list">
-          <div class="boss-entry">
-            <span class="boss-stage mid">S10 중보스</span>
-            <span class="boss-name">흰털 늑대 왕</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage elite">S20 엘리트</span>
-            <span class="boss-name">튜링엔 가고일 리더</span>
-          </div>
-          <div class="boss-entry">
-            <span class="boss-stage final">S30 최종</span>
-            <span class="boss-name final-boss">해바라기 민들레 고릴라</span>
-          </div>
-        </div>
-      </div>
-      <div class="region-card-footer">
-        <span class="stages">Stage <strong>331~360</strong></span>
-        <span class="week-tag">W13~W14</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Monster Stats -->
-  <div class="stats-grid" style="margin-top:28px;">
-    <div class="stat-card">
-      <div class="stat-value">12</div>
-      <div class="stat-label">3D 배경 지역</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">42</div>
-      <div class="stat-label">잡몹 종류</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">36</div>
-      <div class="stat-label">보스 종류</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">78</div>
-      <div class="stat-label">몬스터 총계</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">360</div>
-      <div class="stat-label">총 스테이지</div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════ 3. BACKGROUND SCHEDULE ═══════════════════════ -->
-  <div class="section-header" style="margin-top:64px;">
-    <div class="section-icon" style="background:rgba(78,204,163,0.15); color:var(--accent-green);">D</div>
-    <div>
-      <h2>Environment Production Timeline</h2>
-      <span class="role-badge role-d">[D] 배경 아티스트</span>
-    </div>
-    <span class="count">1지역 = 5일</span>
-  </div>
-
-  <div class="pipeline-note" style="margin-bottom:20px; border-color: rgba(78,204,163,0.2);">
-    <div class="icon">&#127758;</div>
-    <div>
-      <div class="steps">
-        <span class="step">3D Terrain <em>3일</em></span>
-        <span class="arrow">&#10132;</span>
-        <span class="step">텍스처 + 프랍 <em>2일</em></span>
-        <span class="arrow">&#10132;</span>
-        <span class="step">라이팅/포스트 검수</span>
-      </div>
-      <div class="total">= 5일/지역 (1주) &middot; ComfyUI 보조 활용</div>
-    </div>
-  </div>
-
-  <div class="env-timeline">
-    <div class="env-week">
-      <span class="week-label">W01</span>
-      <span class="task-desc"><span class="region-highlight">01 퀸즈게이트</span> &mdash; Terrain 제작</span>
-      <span class="task-phase phase-terrain">Terrain</span>
-    </div>
-    <div class="env-week">
-      <span class="week-label">W02</span>
-      <span class="task-desc"><span class="region-highlight">01 퀸즈게이트</span> &mdash; 프랍/라이팅 완성</span>
-      <span class="task-phase phase-complete">Complete</span>
-    </div>
-    <div class="env-week">
-      <span class="week-label">W03</span>
-      <span class="task-desc"><span class="region-highlight">02 패루초 삼거리</span> &mdash; Terrain 제작</span>
-      <span class="task-phase phase-terrain">Terrain</span>
-    </div>
-    <div class="env-week">
-      <span class="week-label">W04</span>
-      <span class="task-desc"><span class="region-highlight">02 패루초</span> 완성 + <span class="region-highlight">03 AQM</span> 착수</span>
-      <span class="task-phase phase-both">Complete + Start</span>
-    </div>
-    <div class="env-week">
-      <span class="week-label">W05</span>
-      <span class="task-desc"><span class="region-highlight">03 AQM</span> 완성 + <span class="region-highlight">04 왕들의정원</span> 착수</span>
-      <span class="task-phase phase-both">Complete + Start</span>
-    </div>
-    <div class="env-week">
-      <span class="week-label">W06</span>
-      <span class="task-desc"><span class="region-highlight">04 왕들의정원</span> 완성 + <span class="region-highlight">05 테트라</span> 착수</span>
-      <span class="task-phase phase-both">Complete + Start</span>
-    </div>
-    <div class="env-week">
-      <span class="week-label">W07</span>
-      <span class="task-desc"><span class="region-highlight">05 테트라</span> 완성 + <span class="region-highlight">06 코임브라</span> 착수</span>
-      <span class="task-phase phase-both">Complete + Start</span>
-    </div>
-    <div class="env-week">
-      <span class="week-label">W08</span>
-      <span class="task-desc"><span class="region-highlight">06 코임브라</span> 완성 + <span class="region-highlight">07 지저벨</span> 착수</span>
-      <span class="task-phase phase-both">Complete + Start</span>
-    </div>
-    <div class="env-week">
-      <span class="week-label">W09</span>
-      <span class="task-desc"><span class="region-highlight">07 지저벨</span> 완성 + <span class="region-highlight">08 포르토벨로</span> 착수</span>
-      <span class="task-phase phase-both">Complete + Start</span>
-    </div>
-    <div class="env-week">
-      <span class="week-label">W10</span>
-      <span class="task-desc"><span class="region-highlight">08 포르토벨로</span> 완성 + <span class="region-highlight">09 버려진부두</span> 착수</span>
-      <span class="task-phase phase-both">Complete + Start</span>
-    </div>
-    <div class="env-week">
-      <span class="week-label">W11</span>
-      <span class="task-desc"><span class="region-highlight">09 버려진부두</span> 완성 + <span class="region-highlight">10 토르쉐</span> 착수</span>
-      <span class="task-phase phase-both">Complete + Start</span>
-    </div>
-    <div class="env-week">
-      <span class="week-label">W12</span>
-      <span class="task-desc"><span class="region-highlight">10 토르쉐</span> 완성 + <span class="region-highlight">11 보나비스타</span> 착수</span>
-      <span class="task-phase phase-both">Complete + Start</span>
-    </div>
-    <div class="env-week">
-      <span class="week-label">W13</span>
-      <span class="task-desc"><span class="region-highlight">11 보나비스타</span> 완성 + <span class="region-highlight">12 튜링엔숲</span> 착수</span>
-      <span class="task-phase phase-both">Complete + Start</span>
-    </div>
-    <div class="env-week">
-      <span class="week-label">W14</span>
-      <span class="task-desc"><span class="region-highlight">12 튜링엔숲</span> 완성 + 전체 검수</span>
-      <span class="task-phase phase-complete">Final QA</span>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════ 4. VFX / SFX ═══════════════════════ -->
-  <div class="section-header" style="margin-top:64px;">
-    <div class="section-icon" style="background:rgba(217,138,74,0.15); color:var(--accent-orange);">FX</div>
-    <div>
-      <h2>Sound & VFX Schedule</h2>
-    </div>
-    <span class="count">BGM 14 / SFX 90 / VFX 40</span>
-  </div>
-
-  <div class="fx-grid">
-    <div class="fx-card">
-      <div class="fx-header">
-        <span class="fx-period">W01~W02</span>
-      </div>
-      <div class="fx-items">
-        <div class="fx-item"><span class="fx-type bgm">BGM</span> 메인 테마 + 지역 1 BGM</div>
-        <div class="fx-item"><span class="fx-type sfx">SFX</span> 기본 타격음 10종</div>
-        <div class="fx-item"><span class="fx-type vfx">VFX</span> 기본 히트 이펙트 5종</div>
-      </div>
-    </div>
-    <div class="fx-card">
-      <div class="fx-header">
-        <span class="fx-period">W03~W04</span>
-      </div>
-      <div class="fx-items">
-        <div class="fx-item"><span class="fx-type bgm">BGM</span> 지역 2~3 BGM</div>
-        <div class="fx-item"><span class="fx-type sfx">SFX</span> 스킬 SFX 20종</div>
-        <div class="fx-item"><span class="fx-type vfx">VFX</span> 스킬 이펙트 10종</div>
-      </div>
-    </div>
-    <div class="fx-card">
-      <div class="fx-header">
-        <span class="fx-period">W05~W06</span>
-      </div>
-      <div class="fx-items">
-        <div class="fx-item"><span class="fx-type bgm">BGM</span> 지역 4~5 BGM</div>
-        <div class="fx-item"><span class="fx-type sfx">SFX</span> 스킬 SFX 20종</div>
-        <div class="fx-item"><span class="fx-type vfx">VFX</span> 스킬 이펙트 10종</div>
-      </div>
-    </div>
-    <div class="fx-card">
-      <div class="fx-header">
-        <span class="fx-period">W07~W08</span>
-      </div>
-      <div class="fx-items">
-        <div class="fx-item"><span class="fx-type bgm">BGM</span> 지역 6~7 BGM</div>
-        <div class="fx-item"><span class="fx-type sfx">SFX</span> UI SFX 15종 (버튼/레벨업/소환)</div>
-        <div class="fx-item"><span class="fx-type vfx">VFX</span> 소환 연출 이펙트</div>
-      </div>
-    </div>
-    <div class="fx-card">
-      <div class="fx-header">
-        <span class="fx-period">W09~W10</span>
-      </div>
-      <div class="fx-items">
-        <div class="fx-item"><span class="fx-type bgm">BGM</span> 지역 8~9 BGM</div>
-        <div class="fx-item"><span class="fx-type sfx">SFX</span> 보스 전용 SFX 12종</div>
-        <div class="fx-item"><span class="fx-type vfx">VFX</span> 보스 스킬 이펙트</div>
-      </div>
-    </div>
-    <div class="fx-card">
-      <div class="fx-header">
-        <span class="fx-period">W11~W12</span>
-      </div>
-      <div class="fx-items">
-        <div class="fx-item"><span class="fx-type bgm">BGM</span> 지역 10~11 BGM</div>
-        <div class="fx-item"><span class="fx-type sfx">SFX</span> 환경 SFX 10종</div>
-        <div class="fx-item"><span class="fx-type vfx">VFX</span> 환경 파티클</div>
-      </div>
-    </div>
-    <div class="fx-card">
-      <div class="fx-header">
-        <span class="fx-period">W13~W14</span>
-      </div>
-      <div class="fx-items">
-        <div class="fx-item"><span class="fx-type bgm">BGM</span> 지역 12 BGM + 폴리싱</div>
-        <div class="fx-item"><span class="fx-type sfx">SFX</span> 누락 SFX 보충</div>
-        <div class="fx-item"><span class="fx-type vfx">VFX</span> 전체 검수</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════ 5. FINAL CHECKLIST ═══════════════════════ -->
-  <div class="section-header" style="margin-top:64px;">
-    <div class="section-icon" style="background:rgba(212,168,67,0.15); color:var(--gold);">&#10003;</div>
-    <h2>Art Deliverables Checklist</h2>
-  </div>
-
-  <div class="checklist">
-    <div class="checklist-item"><div class="ck-box"></div>캐릭터 일러스트 (640x960)<div class="ck-qty">60종</div></div>
-    <div class="checklist-item"><div class="ck-box"></div>캐릭터 애니메이션 (4모션)<div class="ck-qty">240세트</div></div>
-    <div class="checklist-item"><div class="ck-box"></div>3D 배경 Terrain<div class="ck-qty">12지역</div></div>
-    <div class="checklist-item"><div class="ck-box"></div>배경 프랍/텍스처 세트<div class="ck-qty">12세트</div></div>
-    <div class="checklist-item"><div class="ck-box"></div>잡몹 스프라이트<div class="ck-qty">42종</div></div>
-    <div class="checklist-item"><div class="ck-box"></div>보스 스프라이트<div class="ck-qty">36종</div></div>
-    <div class="checklist-item"><div class="ck-box"></div>히트 / 스킬 VFX<div class="ck-qty">40종</div></div>
-    <div class="checklist-item"><div class="ck-box"></div>BGM 트랙<div class="ck-qty">14곡</div></div>
-    <div class="checklist-item"><div class="ck-box"></div>SFX 세트<div class="ck-qty">90종</div></div>
-    <div class="checklist-item"><div class="ck-box"></div>UI 아이콘 (장비/아이템)<div class="ck-qty">130+</div></div>
-    <div class="checklist-item"><div class="ck-box"></div>가챠 배너 일러스트<div class="ck-qty">5장</div></div>
-    <div class="checklist-item"><div class="ck-box"></div>로딩 / 스플래시 화면<div class="ck-qty">1세트</div></div>
-  </div>
-
-  <!-- Risk -->
-  <div class="risk-banner">
-    <h3>&#9888; Art Risk Mitigation</h3>
-    <div class="risk-grid">
-      <div class="risk-item">
-        <span class="risk-label">캐릭터 주 5종 미달</span>
-        <span class="risk-fix">50종으로 축소, 등급 재분배로 대응</span>
-      </div>
-      <div class="risk-item">
-        <span class="risk-label">배경 주 1지역 미달</span>
-        <span class="risk-fix">10지역으로 축소, 팔레트 스왑 활용</span>
-      </div>
-      <div class="risk-item">
-        <span class="risk-label">사운드/이펙트 지연</span>
-        <span class="risk-fix">플레이스홀더 에셋으로 우선 빌드</span>
-      </div>
-      <div class="risk-item">
-        <span class="risk-label">AI 파이프라인 불안정</span>
-        <span class="risk-fix">수동 제작 병행, 핵심 캐릭터 우선 처리</span>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- Footer -->
-<footer class="doc-footer">
-  <div class="logo-text">GRANADO ESPADA AFK &middot; IMC GAMES</div>
-  <div class="gen-date">Generated 2025.02.25 &middot; Art Production Schedule v1.0</div>
-</footer>
-
+        // Handle user click to update Database
+        item.addEventListener('click', () => {
+          set(dbRef, !isChecked);
+        });
+      });
+    });
+  </script>
 </body>
+
 </html>
